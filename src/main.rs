@@ -22,11 +22,12 @@ fn main() -> io::Result<()> {
             match event::read()? {
                 event::Event::FocusGained => println!("FocusGained"),
                 event::Event::FocusLost => println!("FocusLost"),
-                event::Event::Key(event) => {
-                    match event.code {
-                        event::KeyCode::Char('q') => break,
+                event::Event::Key(key_event) => match key_event.code { 
+                    event::KeyCode::Char(c) => match c {
+                        'q' => break,
                         _ => {},
-                    }
+                    },
+                    _ => {},
                 }
                 event::Event::Mouse(event) => println!("{:?}", event),
                 event::Event::Paste(data) => println!("Pasted {:?}", data),
