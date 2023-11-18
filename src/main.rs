@@ -1,6 +1,6 @@
 #![allow(unused_imports)]
 use crossterm::{
-    cursor::{self, MoveTo},
+    cursor::{self, MoveTo, MoveLeft, MoveRight, MoveUp, MoveDown, SetCursorStyle},
     event::{self, KeyCode},
     execute, queue,
     terminal::{self, EnterAlternateScreen, LeaveAlternateScreen, enable_raw_mode, disable_raw_mode},
@@ -13,6 +13,7 @@ fn main() -> io::Result<()> {
     execute!(
         stdout,
         EnterAlternateScreen,
+        SetCursorStyle::SteadyBlock,
         terminal::Clear(terminal::ClearType::All),
         MoveTo(0,0),
     )?;
@@ -23,8 +24,12 @@ fn main() -> io::Result<()> {
                 event::Event::FocusGained => println!("FocusGained"),
                 event::Event::FocusLost => println!("FocusLost"),
                 event::Event::Key(key_event) => match key_event.code { 
+                    event::KeyCode::Esc => break,
                     event::KeyCode::Char(c) => match c {
-                        'q' => break,
+                        'h' => queue!(stdout, MoveLeft(1))?,
+                        'j' => queue!(stdout, MoveDown(1))?,
+                        'k' => queue!(stdout, MoveUp(1))?,
+                        'l' => queue!(stdout, MoveRight(1))?,
                         _ => {},
                     },
                     _ => {},
@@ -34,6 +39,8 @@ fn main() -> io::Result<()> {
                 event::Event::Resize(width, height) => println!("New size {}x{}", width, height),
             }
         }
+
+        stdout.flush()?;
     }
 
     execute!(stdout, LeaveAlternateScreen)?;
