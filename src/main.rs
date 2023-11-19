@@ -3,7 +3,7 @@ use crossterm::{
     cursor::{self, MoveTo, MoveLeft, MoveRight, MoveUp, MoveDown, SetCursorStyle},
     event::{self, KeyCode},
     execute, queue,
-    terminal::{self, EnterAlternateScreen, LeaveAlternateScreen, enable_raw_mode, disable_raw_mode},
+    terminal::{self, EnterAlternateScreen, LeaveAlternateScreen, enable_raw_mode, disable_raw_mode, ClearType, Clear}, style::Print,
 };
 use std::io::{self, Write};
 
@@ -12,10 +12,13 @@ fn main() -> io::Result<()> {
     let mut stdout = io::stdout();
     execute!(
         stdout,
+        cursor::SavePosition,
         EnterAlternateScreen,
-        SetCursorStyle::SteadyBlock,
+        cursor::Hide,
         terminal::Clear(terminal::ClearType::All),
-        MoveTo(0,0),
+        MoveTo(terminal::size()?.0/2,terminal::size()?.1/2),
+        Print("X"),
+        MoveLeft(1),
     )?;
 
     loop {
@@ -26,10 +29,10 @@ fn main() -> io::Result<()> {
                 event::Event::Key(key_event) => match key_event.code { 
                     event::KeyCode::Esc => break,
                     event::KeyCode::Char(c) => match c {
-                        'h' => queue!(stdout, MoveLeft(1))?,
-                        'j' => queue!(stdout, MoveDown(1))?,
-                        'k' => queue!(stdout, MoveUp(1))?,
-                        'l' => queue!(stdout, MoveRight(1))?,
+                        'h' => queue!(stdout, Clear(ClearType::All), MoveLeft(1), Print("X"), MoveLeft(1))?,
+                        'j' => queue!(stdout, Clear(ClearType::All), MoveDown(1), Print("X"), MoveLeft(1))?,
+                        'k' => queue!(stdout, Clear(ClearType::All), MoveUp(1), Print("X"), MoveLeft(1))?,
+                        'l' => queue!(stdout, Clear(ClearType::All), MoveRight(1), Print("X"), MoveLeft(1))?,
                         _ => {},
                     },
                     _ => {},
@@ -43,7 +46,7 @@ fn main() -> io::Result<()> {
         stdout.flush()?;
     }
 
-    execute!(stdout, LeaveAlternateScreen)?;
+    execute!(stdout, LeaveAlternateScreen, cursor::Show, cursor::RestorePosition)?;
     disable_raw_mode()?;
     Ok(())
 }
