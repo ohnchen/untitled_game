@@ -99,9 +99,7 @@ fn main() -> io::Result<()> {
                     },
                     _ => {}
                 },
-                event::Event::Mouse(event) => println!("{:?}", event),
-                event::Event::Paste(data) => println!("Pasted {:?}", data),
-                event::Event::Resize(width, height) => println!("New size {}x{}", width, height),
+                _ => {}
             }
         //}
 
