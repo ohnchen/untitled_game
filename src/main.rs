@@ -40,7 +40,7 @@ fn main() -> io::Result<()> {
     loop {
         let last_pos = cursor::position().unwrap();
 
-        if event::poll(std::time::Duration::from_millis(500))? {
+        // if event::poll(std::time::Duration::from_millis(500))? {
             match event::read()? {
                 event::Event::FocusGained => println!("FocusGained"),
                 event::Event::FocusLost => println!("FocusLost"),
@@ -103,7 +103,7 @@ fn main() -> io::Result<()> {
                 event::Event::Paste(data) => println!("Pasted {:?}", data),
                 event::Event::Resize(width, height) => println!("New size {}x{}", width, height),
             }
-        }
+        //}
 
         map.draw_update(last_pos, cursor::position().unwrap())?;
         stdout.flush()?;
