@@ -7,6 +7,11 @@ use crossterm::{
 };
 use std::io::{self, Write};
 
+mod tiles;
+mod map;
+
+use map::Map;
+
 fn main() -> io::Result<()> {
     enable_raw_mode()?;
     let mut stdout = io::stdout();
@@ -21,7 +26,11 @@ fn main() -> io::Result<()> {
         MoveLeft(1),
     )?;
 
+    let map = Map::new();
+
     loop {
+        map.draw(cursor::position().unwrap())?;
+
         if event::poll(std::time::Duration::from_millis(500))? {
             match event::read()? {
                 event::Event::FocusGained => println!("FocusGained"),
@@ -33,6 +42,10 @@ fn main() -> io::Result<()> {
                         'j' => queue!(stdout, Clear(ClearType::All), MoveDown(1), Print("X"), MoveLeft(1))?,
                         'k' => queue!(stdout, Clear(ClearType::All), MoveUp(1), Print("X"), MoveLeft(1))?,
                         'l' => queue!(stdout, Clear(ClearType::All), MoveRight(1), Print("X"), MoveLeft(1))?,
+                        'H' => queue!(stdout, Clear(ClearType::All), MoveLeft(3), Print("X"), MoveLeft(1))?,
+                        'J' => queue!(stdout, Clear(ClearType::All), MoveDown(3), Print("X"), MoveLeft(1))?,
+                        'K' => queue!(stdout, Clear(ClearType::All), MoveUp(3), Print("X"), MoveLeft(1))?,
+                        'L' => queue!(stdout, Clear(ClearType::All), MoveRight(3), Print("X"), MoveLeft(1))?,
                         _ => {},
                     },
                     _ => {},
@@ -42,6 +55,7 @@ fn main() -> io::Result<()> {
                 event::Event::Resize(width, height) => println!("New size {}x{}", width, height),
             }
         }
+
 
         stdout.flush()?;
     }
