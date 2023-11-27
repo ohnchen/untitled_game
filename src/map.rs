@@ -1,4 +1,4 @@
-use crossterm::{cursor::MoveTo, queue, style::Print};
+use crossterm::{cursor::MoveTo, queue, style::{Print, PrintStyledContent, Stylize, Color}};
 
 use crate::tiles::Tile::{self, *};
 
@@ -19,7 +19,7 @@ impl Map {
         for (x, row) in self.map_tiles.iter().enumerate() {
             for (y, ref tile) in row.iter().enumerate() {
                 if pos.0 as usize == x && pos.1 as usize == y { continue }
-                queue!(io::stdout(), MoveTo(x as u16, y as u16), Print(tile.draw()),)?;
+                queue!(io::stdout(), MoveTo(x as u16, y as u16), PrintStyledContent(tile.draw::<&str>()))?;
             }
         }
 
