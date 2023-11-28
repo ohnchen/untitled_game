@@ -4,6 +4,7 @@ use crossterm::{
     style::{Color, Print, PrintStyledContent, Stylize},
     terminal,
 };
+use perlin_noise::PerlinNoise;
 use std::io::{self, Write};
 
 use crate::tiles::Tile::{self, *};
@@ -35,12 +36,13 @@ impl Map {
     }
 
     pub fn draw_update(&self, old_pos: (u16, u16), pos: (u16, u16)) -> io::Result<()> {
-        if (pos.0 == 0 && old_pos.0 == 0) && (pos.1 == old_pos.1)
-            || (pos.0 >= terminal::size()?.0 - 1 && old_pos.0 == terminal::size()?.0 - 1)
-                && (pos.1 == old_pos.1)
-            || (pos.1 == 0 && old_pos.1 == 0) && (pos.0 == old_pos.0)
-            || (pos.1 >= terminal::size()?.1 - 1 && old_pos.1 == terminal::size()?.1 - 1)
-                && (pos.0 == old_pos.0)
+        if ((pos.0 == 0 && old_pos.0 == 0) && (pos.1 == old_pos.1))
+            || ((pos.0 >= terminal::size()?.0 - 1 && old_pos.0 == terminal::size()?.0 - 1)
+                && (pos.1 == old_pos.1))
+            || ((pos.1 == 0 && old_pos.1 == 0) && (pos.0 == old_pos.0))
+            || ((pos.1 >= terminal::size()?.1 - 1 && old_pos.1 == terminal::size()?.1 - 1)
+                && (pos.0 == old_pos.0))
+            || (pos.0 == old_pos.0 && pos.1 == old_pos.1)
         {
             return Ok(());
         }
@@ -57,7 +59,22 @@ impl Map {
 
     fn generate_map(width: usize, height: usize) -> Vec<Vec<Tile>> {
         let mut noise: Vec<Vec<Tile>> = vec![vec![Tile::Empty; width]; height];
-        noise[10][10] = Tile::Rock;
+        let perl = PerlinNoise::new();
+
+        for x in 0..width {
+            for y in 0..height {
+                let n = x as f64/width as f64 + 0.43;
+                let m = y as f64/height as f64 + 0.13;
+
+                if perl.get2d([n, m]) < 0.46
+                {
+                    noise[y][x] = Tile::Rock;
+                } else {
+                    noise[y][x] = Tile::Grass;
+                }
+            }
+        }
+
         noise
     }
 }
