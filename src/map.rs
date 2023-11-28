@@ -60,17 +60,20 @@ impl Map {
     fn generate_map(width: usize, height: usize) -> Vec<Vec<Tile>> {
         let mut noise: Vec<Vec<Tile>> = vec![vec![Tile::Empty; width]; height];
         let perl = PerlinNoise::new();
+        let scale: f64 = 3.31;
 
         for x in 0..width {
             for y in 0..height {
-                let n = x as f64/width as f64 + 0.43;
-                let m = y as f64/height as f64 + 0.13;
+                let n = x as f64/width as f64 * scale;
+                let m = y as f64/height as f64 * scale;
 
-                if perl.get2d([n, m]) < 0.46
-                {
+                let perl = perl.get2d([n, m]);
+                if perl > 0.5 {
                     noise[y][x] = Tile::Rock;
-                } else {
+                } else if perl > 0.4 {
                     noise[y][x] = Tile::Grass;
+                } else {
+                    noise[y][x] = Tile::Water;
                 }
             }
         }

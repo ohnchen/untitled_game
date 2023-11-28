@@ -6,6 +6,7 @@ use std::fmt::Display;
 pub enum Tile {
     Grass,
     Rock,
+    Water,
     Street,
 
     Empty,
