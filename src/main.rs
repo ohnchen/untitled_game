@@ -14,7 +14,7 @@ use std::io::{self, Write};
 mod map;
 mod tiles;
 
-use map::Map;
+use crate::map::Map;
 
 macro_rules! movePlayer {
     ($direction:tt, $len:tt) => {
