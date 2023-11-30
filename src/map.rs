@@ -60,7 +60,7 @@ impl Map {
     fn generate_map(width: usize, height: usize) -> Vec<Vec<Tile>> {
         let mut noise: Vec<Vec<Tile>> = vec![vec![Tile::Empty; width]; height];
         let perl = PerlinNoise::new();
-        let scale: f64 = 3.31;
+        let scale: f64 = 2.7193;
 
         for x in 0..width {
             for y in 0..height {
