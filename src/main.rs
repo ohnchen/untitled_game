@@ -29,7 +29,7 @@ fn main() -> io::Result<()> {
         terminal::Clear(terminal::ClearType::All),
     )?;
 
-    let extra_height: u16 = 0;
+    let extra_height: u16 = 10;
     let map_width: u16 = terminal::size()?.0;
     let map_height: u16 = terminal::size()?.1 - extra_height;
 
@@ -50,14 +50,14 @@ fn main() -> io::Result<()> {
                 event::Event::Key(key_event) => match key_event.code {
                     event::KeyCode::Esc => break,
                     event::KeyCode::Char(c) => match c {
-                        'h' => player.move_direction(Direction::Left, 1),
-                        'l' => player.move_direction(Direction::Right, 1),
-                        'j' => player.move_direction(Direction::Down, 1),
-                        'k' => player.move_direction(Direction::Up, 1),
-                        // 'H' => player.move_direction(Direction::Left, 3),
-                        // 'L' => player.move_direction(Direction::Right, 3),
-                        // 'J' => player.move_direction(Direction::Down, 3),
-                        // 'K' => player.move_direction(Direction::Up, 3),
+                        'h' => player.move_direction(&map, Direction::Left, 1),
+                        'l' => player.move_direction(&map, Direction::Right, 1),
+                        'j' => player.move_direction(&map, Direction::Down, 1),
+                        'k' => player.move_direction(&map, Direction::Up, 1),
+                        'H' => player.move_direction(&map, Direction::Left, 3),
+                        'L' => player.move_direction(&map, Direction::Right, 3),
+                        'J' => player.move_direction(&map, Direction::Down, 3),
+                        'K' => player.move_direction(&map, Direction::Up, 3),
                         _ => {}
                     },
                     _ => {}
@@ -66,7 +66,7 @@ fn main() -> io::Result<()> {
             }
         //}
 
-        map.draw_player(&player)?;
+        map.draw_player(cursor::position().unwrap(), &player)?;
         stdout.flush()?;
     }
 

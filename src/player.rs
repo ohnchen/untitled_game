@@ -4,7 +4,7 @@ pub enum Direction {
     Left,
     Right,
     Up,
-    Down
+    Down,
 }
 
 pub struct Player {
@@ -20,13 +20,36 @@ impl Player {
         }
     }
 
-    pub fn move_direction(&mut self, direction: Direction, length: u16) {
-        // [TODO] put in checks
+    pub fn move_direction(&mut self, map: &Map, direction: Direction, length: u16) {
         match direction {
-            Direction::Left => self.x -= length,
-            Direction::Right => self.x += length,
-            Direction::Down => self.y += length,
-            Direction::Up => self.y -= length,
-        } 
+            Direction::Left => {
+                if self.x as i32 - length as i32 >= 0 {
+                    self.x -= length;
+                } else {
+                    self.x = 0
+                }
+            }
+            Direction::Right => {
+                if self.x + length < map.width {
+                    self.x += length;
+                } else {
+                    self.x = map.width - 1
+                }
+            }
+            Direction::Down => {
+                if self.y + length < map.height {
+                    self.y += length;
+                } else {
+                    self.y = map.height - 1
+                }
+            }
+            Direction::Up => {
+                if self.y as i32 - length as i32 >= 0 {
+                    self.y -= length;
+                } else {
+                    self.y = 0
+                }
+            }
+        }
     }
 }

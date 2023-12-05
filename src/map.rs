@@ -1,5 +1,5 @@
 use crossterm::{
-    cursor::MoveTo,
+    cursor::{MoveLeft, MoveTo, MoveToRow},
     queue,
     style::{Color, Print, PrintStyledContent, Stylize},
     terminal,
@@ -35,18 +35,30 @@ impl Map {
                 )?;
             }
         }
-
+    
+        self.draw_map_border()?;
         io::stdout().flush()?;
         Ok(())
     }
 
-    pub fn draw_player(&self, player: &Player) -> io::Result<()> {
+    pub fn draw_map_border(&self) -> io::Result<()> {
+        let row = self.map_tiles.len();
+        queue!(io::stdout(), MoveTo(0, row as u16))?;
+        for _ in 0..self.map_tiles[0].len() {
+            queue!(io::stdout(), Print("─"))?;
+        }
+
+        Ok(())
+    }
+
+    pub fn draw_player(&self, current_pos: (u16, u16), player: &Player) -> io::Result<()> {
         queue!(
             io::stdout(),
-            //MoveTo(current_pos.0, current_pos.1),
-            //PrintStyledContent(self.map_tiles[current_pos.0 as usize][current_pos.1 as usize].draw::<&str>()),
+            MoveTo(current_pos.0, current_pos.1),
+            PrintStyledContent(self.map_tiles[current_pos.1 as usize][current_pos.0 as usize].draw::<&str>()),
             MoveTo(player.x, player.y),
             Print('X'),
+            MoveLeft(1),
         )?;
         Ok(())
     }
