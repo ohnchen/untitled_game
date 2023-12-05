@@ -1,4 +1,4 @@
-use crate::map::Map;
+use crate::{map::Map, tiles::Tile};
 
 pub enum Direction {
     Left,
@@ -22,10 +22,34 @@ impl Player {
 
     pub fn move_direction(&mut self, map: &Map, direction: Direction, length: u16) {
         match direction {
-            Direction::Left => self.x = Self::saturated_sub(self.x, length),
-            Direction::Right => self.x = Self::saturated_add(self.x, length, map.width),
-            Direction::Up => self.y = Self::saturated_sub(self.y, length),
-            Direction::Down => self.y = Self::saturated_add(self.y, length, map.height),
+            Direction::Left => {
+                let newx = Self::saturated_sub(self.x, length);
+                if !map.get_tile(newx, self.y).eq(&Tile::Rock) {
+                    self.x = newx
+                }
+                //if !map.get_tiles(self.x, self.y, newx, self.y).contains(&Tile::Rock) { self.x = newx }
+            }
+            Direction::Right => {
+                let newx = Self::saturated_add(self.x, length, map.width);
+                if !map.get_tile(newx, self.y).eq(&Tile::Rock) {
+                    self.x = newx
+                }
+                //if !map.get_tiles(self.x, self.y, newx, self.y).contains(&Tile::Rock) { self.x = newx }
+            }
+            Direction::Up => {
+                let newy = Self::saturated_sub(self.y, length);
+                if !map.get_tile(self.x, newy).eq(&Tile::Rock) {
+                    self.y = newy
+                }
+                //if !map.get_tiles(self.x, self.y, newx, self.y).contains(&Tile::Rock) { self.x = newx }
+            }
+            Direction::Down => {
+                let newy = Self::saturated_add(self.y, length, map.height);
+                if !map.get_tile(self.x, newy).eq(&Tile::Rock) {
+                    self.y = newy
+                }
+                //if !map.get_tiles(self.x, self.y, newx, self.y).contains(&Tile::Rock) { self.x = newx }
+            }
         }
     }
 
@@ -41,7 +65,7 @@ impl Player {
     fn saturated_add(op1: u16, op2: u16, max: u16) -> u16 {
         let sum: u16 = op1 + op2;
         if sum >= max {
-            return max-1;
+            return max - 1;
         } else {
             return sum as u16;
         }

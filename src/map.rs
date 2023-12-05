@@ -25,6 +25,21 @@ impl Map {
         }
     }
 
+    pub fn get_tile(&self, x: u16, y: u16) -> Tile {
+        self.map_tiles[y as usize][x as usize]
+    }
+
+    pub fn get_tiles(&self, x: u16, y: u16, xto: u16, yto: u16) -> Vec<Tile> {
+        let tiles = Vec::new();
+        for row in &self.map_tiles[y as usize..yto as usize+1] {
+            [tiles.clone(), row[x as usize..xto as usize+1].to_vec()].concat(); 
+        }
+
+        dbg!(&tiles);
+
+        tiles
+    }
+
     pub fn draw_map(&self) -> io::Result<()> {
         for (x, row) in self.map_tiles.iter().enumerate() {
             for (y, ref tile) in row.iter().enumerate() {
