@@ -2,7 +2,7 @@ use crossterm::style::{Color, StyledContent, Stylize};
 use std::fmt::Display;
 
 #[allow(dead_code)]
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum Tile {
     Grass,
     Rock,

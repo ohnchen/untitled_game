@@ -8,15 +8,20 @@ use perlin_noise::PerlinNoise;
 use std::io::{self, Write};
 
 use crate::tiles::Tile::{self, *};
+use crate::player::Player;
 
 pub struct Map {
+    pub width: u16,
+    pub height: u16,
     map_tiles: Vec<Vec<Tile>>,
 }
 
 impl Map {
-    pub fn new(width: usize, height: usize) -> Self {
+    pub fn new(width: u16, height: u16) -> Self {
         Self {
-            map_tiles: Self::generate_map(width, height),
+            width,
+            height,
+            map_tiles: Self::generate_map(width.into(), height.into()),
         }
     }
 
@@ -25,7 +30,7 @@ impl Map {
             for (y, ref tile) in row.iter().enumerate() {
                 queue!(
                     io::stdout(),
-                    MoveTo(x as u16, y as u16),
+                    MoveTo(y as u16, x as u16),
                     PrintStyledContent(tile.draw::<&str>())
                 )?;
             }
@@ -35,30 +40,19 @@ impl Map {
         Ok(())
     }
 
-    pub fn draw_update(&self, old_pos: (u16, u16), pos: (u16, u16)) -> io::Result<()> {
-        if ((pos.0 == 0 && old_pos.0 == 0) && (pos.1 == old_pos.1))
-            || ((pos.0 >= terminal::size()?.0 - 1 && old_pos.0 == terminal::size()?.0 - 1)
-                && (pos.1 == old_pos.1))
-            || ((pos.1 == 0 && old_pos.1 == 0) && (pos.0 == old_pos.0))
-            || ((pos.1 >= terminal::size()?.1 - 1 && old_pos.1 == terminal::size()?.1 - 1)
-                && (pos.0 == old_pos.0))
-            || (pos.0 == old_pos.0 && pos.1 == old_pos.1)
-        {
-            return Ok(());
-        }
+    pub fn draw_player(&self, player: &Player) -> io::Result<()> {
         queue!(
             io::stdout(),
-            MoveTo(old_pos.0, old_pos.1),
-            PrintStyledContent(
-                self.map_tiles[old_pos.0 as usize][old_pos.1 as usize].draw::<&str>()
-            ),
-            MoveTo(pos.0, pos.1),
+            //MoveTo(current_pos.0, current_pos.1),
+            //PrintStyledContent(self.map_tiles[current_pos.0 as usize][current_pos.1 as usize].draw::<&str>()),
+            MoveTo(player.x, player.y),
+            Print('X'),
         )?;
         Ok(())
     }
 
     fn generate_map(width: usize, height: usize) -> Vec<Vec<Tile>> {
-        let mut noise: Vec<Vec<Tile>> = vec![vec![Tile::Empty; width]; height];
+        let mut tiles: Vec<Vec<Tile>> = vec![vec![Tile::Empty; width]; height];
         let perl = PerlinNoise::new();
         let scale: f64 = 2.7193;
 
@@ -69,15 +63,17 @@ impl Map {
 
                 let perl = perl.get2d([n, m]);
                 if perl > 0.5 {
-                    noise[y][x] = Tile::Rock;
+                    tiles[y][x] = Tile::Rock;
                 } else if perl > 0.4 {
-                    noise[y][x] = Tile::Grass;
+                    tiles[y][x] = Tile::Grass;
                 } else {
-                    noise[y][x] = Tile::Water;
+                    tiles[y][x] = Tile::Water;
                 }
             }
         }
 
-        noise
+        println!("{}", width);
+
+        tiles
     }
 }

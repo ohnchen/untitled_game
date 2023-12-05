@@ -12,24 +12,11 @@ use crossterm::{
 use std::io::{self, Write};
 
 mod map;
+mod player;
 mod tiles;
 
 use crate::map::Map;
-
-macro_rules! movePlayer {
-    ($direction:tt, $len:tt) => {
-        match $direction {
-            "left" => queue!(io::stdout(), MoveLeft($len), Print("X"), MoveLeft(1))?,
-            "down" => queue!(io::stdout(), MoveDown($len), Print("X"), MoveLeft(1))?,
-            "up" => queue!(io::stdout(), MoveUp($len), Print("X"), MoveLeft(1))?,
-            "right" => queue!(io::stdout(), MoveRight($len), Print("X"), MoveLeft(1))?,
-            _ => {}
-        }
-    };
-    () => {
-        queue!(io::stdout(), Print("X"), MoveLeft(1))?
-    };
-}
+use crate::player::{Direction, Player};
 
 fn main() -> io::Result<()> {
     enable_raw_mode()?;
@@ -38,45 +25,48 @@ fn main() -> io::Result<()> {
         stdout,
         cursor::SavePosition,
         EnterAlternateScreen,
-        cursor::Hide,
+        // cursor::Hide,
         terminal::Clear(terminal::ClearType::All),
     )?;
 
-    let map = Map::new(terminal::size()?.1.into(), terminal::size()?.0.into());
+    let extra_height: u16 = 0;
+    let map_width: u16 = terminal::size()?.0;
+    let map_height: u16 = terminal::size()?.1 - extra_height;
+
+    let map = Map::new(map_width, map_height);
     map.draw_map()?;
 
+    let mut player = Player::new(&map);
     execute!(
-        stdout,
-        MoveTo(terminal::size()?.0 / 2, terminal::size()?.1 / 2),
-        Print("X"),
-        MoveLeft(1),
+        io::stdout(),
+        MoveTo(map.width/2, map.height/2),
+        Print('X'),
+        MoveLeft(1)
     )?;
 
     loop {
-        let last_pos = cursor::position().unwrap();
-
-        // if event::poll(std::time::Duration::from_millis(500))? {
-        match event::read()? {
-            event::Event::Key(key_event) => match key_event.code {
-                event::KeyCode::Esc => break,
-                event::KeyCode::Char(c) => match c {
-                    'h' => movePlayer!("left", 1),
-                    'j' => movePlayer!("down", 1),
-                    'k' => movePlayer!("up", 1),
-                    'l' => movePlayer!("right", 1),
-                    'H' => movePlayer!("left", 3),
-                    'J' => movePlayer!("down", 3),
-                    'K' => movePlayer!("up", 3),
-                    'L' => movePlayer!("right", 3),
-                    _ => movePlayer!(),
+        //if event::poll(std::time::Duration::from_millis(500))? {
+            match event::read()? {
+                event::Event::Key(key_event) => match key_event.code {
+                    event::KeyCode::Esc => break,
+                    event::KeyCode::Char(c) => match c {
+                        'h' => player.move_direction(Direction::Left, 1),
+                        'l' => player.move_direction(Direction::Right, 1),
+                        'j' => player.move_direction(Direction::Down, 1),
+                        'k' => player.move_direction(Direction::Up, 1),
+                        // 'H' => player.move_direction(Direction::Left, 3),
+                        // 'L' => player.move_direction(Direction::Right, 3),
+                        // 'J' => player.move_direction(Direction::Down, 3),
+                        // 'K' => player.move_direction(Direction::Up, 3),
+                        _ => {}
+                    },
+                    _ => {}
                 },
-                _ => movePlayer!(),
-            },
-            _ => movePlayer!(),
-        }
+                _ => {}
+            }
         //}
 
-        map.draw_update(last_pos, cursor::position().unwrap())?;
+        map.draw_player(&player)?;
         stdout.flush()?;
     }
 
