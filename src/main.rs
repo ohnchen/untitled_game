@@ -25,7 +25,7 @@ fn main() -> io::Result<()> {
         stdout,
         cursor::SavePosition,
         EnterAlternateScreen,
-        cursor::Hide,
+        //cursor::Hide,
         terminal::Clear(terminal::ClearType::All),
     )?;
 
@@ -45,6 +45,7 @@ fn main() -> io::Result<()> {
     )?;
 
     loop {
+        let old_player_pos: (u16, u16) = (player.x, player.y);
         //if event::poll(std::time::Duration::from_millis(500))? {
             match event::read()? {
                 event::Event::Key(key_event) => match key_event.code {
@@ -66,7 +67,7 @@ fn main() -> io::Result<()> {
             }
         //}
 
-        map.draw_player(cursor::position().unwrap(), &player)?;
+        map.draw_player(old_player_pos, &player)?;
         stdout.flush()?;
     }
 
