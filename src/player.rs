@@ -22,34 +22,28 @@ impl Player {
 
     pub fn move_direction(&mut self, map: &Map, direction: Direction, length: u16) {
         match direction {
-            Direction::Left => {
-                if self.x as i32 - length as i32 >= 0 {
-                    self.x -= length;
-                } else {
-                    self.x = 0
-                }
-            }
-            Direction::Right => {
-                if self.x + length < map.width {
-                    self.x += length;
-                } else {
-                    self.x = map.width - 1
-                }
-            }
-            Direction::Down => {
-                if self.y + length < map.height {
-                    self.y += length;
-                } else {
-                    self.y = map.height - 1
-                }
-            }
-            Direction::Up => {
-                if self.y as i32 - length as i32 >= 0 {
-                    self.y -= length;
-                } else {
-                    self.y = 0
-                }
-            }
+            Direction::Left => self.x = Self::saturated_sub(self.x, length),
+            Direction::Right => self.x = Self::saturated_add(self.x, length, map.width),
+            Direction::Up => self.y = Self::saturated_sub(self.y, length),
+            Direction::Down => self.y = Self::saturated_add(self.y, length, map.height),
+        }
+    }
+
+    fn saturated_sub(op1: u16, op2: u16) -> u16 {
+        let diff: i32 = op1 as i32 - op2 as i32;
+        if diff < 0 {
+            return 0;
+        } else {
+            return diff as u16;
+        }
+    }
+
+    fn saturated_add(op1: u16, op2: u16, max: u16) -> u16 {
+        let sum: u16 = op1 + op2;
+        if sum > max {
+            return max;
+        } else {
+            return sum as u16;
         }
     }
 }

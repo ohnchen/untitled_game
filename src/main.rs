@@ -25,7 +25,7 @@ fn main() -> io::Result<()> {
         stdout,
         cursor::SavePosition,
         EnterAlternateScreen,
-        // cursor::Hide,
+        cursor::Hide,
         terminal::Clear(terminal::ClearType::All),
     )?;
 
