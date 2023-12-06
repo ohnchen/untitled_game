@@ -49,7 +49,7 @@ fn main() -> io::Result<()> {
 
     execute!(
         io::stdout(),
-        MoveTo(map.width / 2, map.height / 2),
+        MoveTo(map.spawnpoint.0 as u16, map.spawnpoint.1 as u16),
         Print('X'),
         MoveLeft(1)
     )?;
@@ -76,7 +76,7 @@ fn main() -> io::Result<()> {
                     player = Player::new(&map);
                     execute!(
                         io::stdout(),
-                        MoveTo(map.width / 2, map.height / 2),
+                        MoveTo(map.spawnpoint.0 as u16, map.spawnpoint.1 as u16),
                         Print('X'),
                         MoveLeft(1)
                     )?;

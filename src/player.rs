@@ -15,8 +15,8 @@ pub struct Player {
 impl Player {
     pub fn new(map: &Map) -> Self {
         Self {
-            x: map.width / 2,
-            y: map.height / 2,
+            x: map.spawnpoint.0 as u16,
+            y: map.spawnpoint.1 as u16,
         }
     }
 
