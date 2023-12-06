@@ -7,9 +7,15 @@ pub enum Direction {
     Down,
 }
 
+#[derive(PartialEq, Eq)]
+pub enum Tools {
+    Pickaxe,
+}
+
 pub struct Player {
     pub x: u16,
     pub y: u16,
+    pub tools: Vec<Tools>,
 }
 
 impl Player {
@@ -17,6 +23,7 @@ impl Player {
         Self {
             x: map.spawnpoint.0 as u16,
             y: map.spawnpoint.1 as u16,
+            tools: Vec::new(),
         }
     }
 
