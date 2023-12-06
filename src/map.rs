@@ -29,23 +29,13 @@ impl Map {
         self.map_tiles[y as usize][x as usize]
     }
 
-    pub fn get_tiles(&self, x: u16, y: u16, xto: u16, yto: u16) -> Vec<Tile> {
-        let tiles = Vec::new();
-        for row in &self.map_tiles[y as usize..yto as usize+1] {
-            [tiles.clone(), row[x as usize..xto as usize+1].to_vec()].concat(); 
-        }
-
-        dbg!(&tiles);
-
-        tiles
-    }
-
-    pub fn draw_map(&self) -> io::Result<()> {
-        for (x, row) in self.map_tiles.iter().enumerate() {
-            for (y, ref tile) in row.iter().enumerate() {
+    pub fn draw_map(&self, xbounds: (usize, usize), ybounds: (usize, usize)) -> io::Result<()> {
+        for x in xbounds.0..xbounds.1 {
+            for y in ybounds.0..ybounds.1 {
+                let tile = self.map_tiles[y][x];
                 queue!(
                     io::stdout(),
-                    MoveTo(y as u16, x as u16),
+                    MoveTo(x as u16, y as u16),
                     PrintStyledContent(tile.draw::<&str>())
                 )?;
             }
@@ -98,8 +88,6 @@ impl Map {
                 }
             }
         }
-
-        println!("{}", width);
 
         tiles
     }
