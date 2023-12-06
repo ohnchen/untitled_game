@@ -24,31 +24,27 @@ impl Player {
         match direction {
             Direction::Left => {
                 let newx = Self::saturated_sub(self.x, length);
-                if !map.get_tile(newx, self.y).eq(&Tile::Rock) {
-                    self.x = newx
+                while !map.get_tile(Self::saturated_sub(self.x, 1), self.y).eq(&Tile::Rock) && self.x > newx {
+                    self.x -= 1;
                 }
-                //if !map.get_tiles(self.x, self.y, newx, self.y).contains(&Tile::Rock) { self.x = newx }
             }
             Direction::Right => {
                 let newx = Self::saturated_add(self.x, length, map.width);
-                if !map.get_tile(newx, self.y).eq(&Tile::Rock) {
-                    self.x = newx
+                if !map.get_tile(Self::saturated_add(self.x, 1, map.width), self.y).eq(&Tile::Rock) && self.x < newx{
+                    self.x += 1;
                 }
-                //if !map.get_tiles(self.x, self.y, newx, self.y).contains(&Tile::Rock) { self.x = newx }
             }
             Direction::Up => {
                 let newy = Self::saturated_sub(self.y, length);
-                if !map.get_tile(self.x, newy).eq(&Tile::Rock) {
-                    self.y = newy
+                if !map.get_tile(self.x, Self::saturated_sub(self.y, 1)).eq(&Tile::Rock) && self.y > newy {
+                    self.y -= 1;
                 }
-                //if !map.get_tiles(self.x, self.y, newx, self.y).contains(&Tile::Rock) { self.x = newx }
             }
             Direction::Down => {
                 let newy = Self::saturated_add(self.y, length, map.height);
-                if !map.get_tile(self.x, newy).eq(&Tile::Rock) {
-                    self.y = newy
+                if !map.get_tile(self.x,  Self::saturated_add(self.y, 1, map.height)).eq(&Tile::Rock) && self.y < newy {
+                    self.y += 1;
                 }
-                //if !map.get_tiles(self.x, self.y, newx, self.y).contains(&Tile::Rock) { self.x = newx }
             }
         }
     }
