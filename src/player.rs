@@ -30,19 +30,19 @@ impl Player {
             }
             Direction::Right => {
                 let newx = Self::saturated_add(self.x, length, map.width);
-                if !map.get_tile(Self::saturated_add(self.x, 1, map.width), self.y).eq(&Tile::Rock) && self.x < newx{
+                while !map.get_tile(Self::saturated_add(self.x, 1, map.width), self.y).eq(&Tile::Rock) && self.x < newx{
                     self.x += 1;
                 }
             }
             Direction::Up => {
                 let newy = Self::saturated_sub(self.y, length);
-                if !map.get_tile(self.x, Self::saturated_sub(self.y, 1)).eq(&Tile::Rock) && self.y > newy {
+                while !map.get_tile(self.x, Self::saturated_sub(self.y, 1)).eq(&Tile::Rock) && self.y > newy {
                     self.y -= 1;
                 }
             }
             Direction::Down => {
                 let newy = Self::saturated_add(self.y, length, map.height);
-                if !map.get_tile(self.x,  Self::saturated_add(self.y, 1, map.height)).eq(&Tile::Rock) && self.y < newy {
+                while !map.get_tile(self.x,  Self::saturated_add(self.y, 1, map.height)).eq(&Tile::Rock) && self.y < newy {
                     self.y += 1;
                 }
             }

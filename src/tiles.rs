@@ -1,13 +1,11 @@
 use crossterm::style::{Color, StyledContent, Stylize};
 use std::fmt::Display;
 
-#[allow(dead_code)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Tile {
     Grass,
     Rock,
     Water,
-    Street,
 
     Empty,
 }
@@ -19,8 +17,8 @@ impl Tile {
     {
         match self {
             Tile::Grass => return "g".with(Color::DarkGreen),
-            Tile::Rock => return "r".with(Color::Blue),
-            Tile::Street => return "s".with(Color::White),
+            Tile::Rock => return "r".with(Color::Grey),
+            Tile::Water => return "w".with(Color::Blue),
             _ => return "e".with(Color::DarkGrey),
         }
     }
