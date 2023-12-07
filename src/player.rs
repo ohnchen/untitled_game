@@ -21,9 +21,10 @@ pub struct Player {
 
 impl Player {
     pub fn new(map: &Map) -> Self {
+        let (x, y): (u16, u16) = map.spawnpoint;
         Self {
-            x: map.spawnpoint.0 as u16,
-            y: map.spawnpoint.1 as u16,
+            x,
+            y,
             tools: Vec::new(),
         }
     }
@@ -49,7 +50,7 @@ impl Player {
                 }
             }, 
             Direction::Down => {
-                let new_y = saturated_add(self.y, length, map.width); 
+                let new_y = saturated_add(self.y, length, map.height); 
                 while self.can_go_down(&map, &Tile::Rock) && self.y < new_y {
                     self.y += 1;
                 }
@@ -73,7 +74,7 @@ impl Player {
     }
 
     fn can_go_down(&self, map: &Map, block_tile: &Tile) -> bool {
-        !map.get_tile(self.x, saturated_add(self.y, 1, map.width))
+        !map.get_tile(self.x, saturated_add(self.y, 1, map.height))
             .eq(block_tile)
     }
 }

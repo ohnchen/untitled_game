@@ -13,18 +13,18 @@ use crate::tiles::Tile::{self, *};
 pub struct Map {
     pub width: u16,
     pub height: u16,
-    pub spawnpoint: (usize, usize),
+    pub spawnpoint: (u16, u16),
     map_tiles: Vec<Vec<Tile>>,
 }
 
 impl Map {
     pub fn new(width: u16, height: u16) -> Self {
-        let res = Self::generate_map(width.into(), height.into());
+        let (map_tiles, spawnpoint) = Self::generate_map(width.into(), height.into());
         Self {
             width,
             height,
-            spawnpoint: res.1,
-            map_tiles: res.0,
+            spawnpoint: (spawnpoint.0 as u16, spawnpoint.1 as u16),
+            map_tiles,
         }
     }
 
@@ -32,9 +32,9 @@ impl Map {
         self.map_tiles[y as usize][x as usize]
     }
 
-    pub fn draw_map(&self, xbounds: (usize, usize), ybounds: (usize, usize)) -> io::Result<()> {
-        for x in xbounds.0..xbounds.1 {
-            for y in ybounds.0..ybounds.1 {
+    pub fn draw_map(&self, xmin: usize, xmax: usize, ymin: usize, ymax: usize) -> io::Result<()> {
+        for x in xmin..xmax {
+            for y in ymin..ymax {
                 let tile = self.map_tiles[y][x];
                 queue!(
                     io::stdout(),
@@ -45,13 +45,12 @@ impl Map {
         }
 
         self.draw_map_border()?;
-        io::stdout().flush()?;
         Ok(())
     }
 
     pub fn draw_map_border(&self) -> io::Result<()> {
-        let row = self.map_tiles.len();
-        queue!(io::stdout(), MoveTo(0, row as u16))?;
+        let border_row = self.map_tiles.len() as u16;
+        queue!(io::stdout(), MoveTo(0, border_row))?;
         for _ in 0..self.map_tiles[0].len() {
             queue!(io::stdout(), Print("─"))?;
         }
@@ -75,7 +74,7 @@ impl Map {
 
     fn generate_map(width: usize, height: usize) -> (Vec<Vec<Tile>>, (usize, usize)) {
         let mut spawnpoint_set: bool = false;
-        let mut spawnpoint: (usize, usize) = (height/2, width/2);
+        let mut spawnpoint: (usize, usize) = (height / 2, width / 2);
         let mut tiles: Vec<Vec<Tile>> = vec![vec![Tile::Empty; width]; height];
         let perl = PerlinNoise::new();
         let scale: f64 = 2.7193;
