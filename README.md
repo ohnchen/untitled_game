@@ -1,4 +1,4 @@
-![Banner](pic.png)
+![Banner](assets/readme/pic.png)
 
 # untitled game
 
