@@ -1,3 +1,4 @@
+use crate::utils::*;
 use crate::{map::Map, tiles::Tile};
 
 pub enum Direction {
@@ -30,47 +31,45 @@ impl Player {
     pub fn move_direction(&mut self, map: &Map, direction: Direction, length: u16) {
         match direction {
             Direction::Left => {
-                let newx = Self::saturated_sub(self.x, length);
-                while !map.get_tile(Self::saturated_sub(self.x, 1), self.y).eq(&Tile::Rock) && self.x > newx {
+                while self.can_go_left(&map, &Tile::Rock) && self.x > saturated_sub(self.x, length) {
                     self.x -= 1;
                 }
-            }
+            },
             Direction::Right => {
-                let newx = Self::saturated_add(self.x, length, map.width);
-                while !map.get_tile(Self::saturated_add(self.x, 1, map.width), self.y).eq(&Tile::Rock) && self.x < newx{
+                while self.can_go_right(&map, &Tile::Rock) && self.x < saturated_sub(self.x, length) {
                     self.x += 1;
                 }
-            }
+            }, 
             Direction::Up => {
-                let newy = Self::saturated_sub(self.y, length);
-                while !map.get_tile(self.x, Self::saturated_sub(self.y, 1)).eq(&Tile::Rock) && self.y > newy {
-                    self.y -= 1;
+                while self.can_go_up(&map, &Tile::Rock) && self.x > saturated_sub(self.x, length) {
+                    self.x -= 1;
                 }
-            }
+            }, 
             Direction::Down => {
-                let newy = Self::saturated_add(self.y, length, map.height);
-                while !map.get_tile(self.x,  Self::saturated_add(self.y, 1, map.height)).eq(&Tile::Rock) && self.y < newy {
-                    self.y += 1;
+                while self.can_go_down(&map, &Tile::Rock) && self.x < saturated_sub(self.x, length) {
+                    self.x -= 1;
                 }
-            }
+            },
         }
     }
 
-    fn saturated_sub(op1: u16, op2: u16) -> u16 {
-        let diff: i32 = op1 as i32 - op2 as i32;
-        if diff < 0 {
-            return 0;
-        } else {
-            return diff as u16;
-        }
+    fn can_go_left(&self, map: &Map, block_tile: &Tile) -> bool {
+        !map.get_tile(saturated_sub(self.x, 1), self.y)
+            .eq(block_tile)
+    }
+    
+    fn can_go_right(&self, map: &Map, block_tile: &Tile) -> bool {
+        !map.get_tile(saturated_add(self.x, 1, map.width), self.y)
+            .eq(block_tile)
+    }
+    
+    fn can_go_up(&self, map: &Map, block_tile: &Tile) -> bool {
+        !map.get_tile(self.x, saturated_sub(self.y, 1))
+            .eq(block_tile)
     }
 
-    fn saturated_add(op1: u16, op2: u16, max: u16) -> u16 {
-        let sum: u16 = op1 + op2;
-        if sum >= max {
-            return max - 1;
-        } else {
-            return sum as u16;
-        }
+    fn can_go_down(&self, map: &Map, block_tile: &Tile) -> bool {
+        !map.get_tile(self.x, saturated_add(self.x, 1, map.width))
+            .eq(block_tile)
     }
 }

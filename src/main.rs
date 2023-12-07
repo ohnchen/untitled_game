@@ -11,6 +11,7 @@ use crossterm::{
 };
 use std::io::{self, Write};
 
+mod utils;
 mod info;
 mod map;
 mod player;

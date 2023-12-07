@@ -39,7 +39,7 @@ impl Map {
                 queue!(
                     io::stdout(),
                     MoveTo(x as u16, y as u16),
-                    PrintStyledContent(tile.draw::<&str>())
+                    PrintStyledContent(tile.draw_tile::<&str>())
                 )?;
             }
         }
@@ -64,7 +64,7 @@ impl Map {
             io::stdout(),
             MoveTo(current_pos.0, current_pos.1),
             PrintStyledContent(
-                self.map_tiles[current_pos.1 as usize][current_pos.0 as usize].draw::<&str>()
+                self.map_tiles[current_pos.1 as usize][current_pos.0 as usize].draw_tile::<&str>()
             ),
             MoveTo(player.x, player.y),
             Print('X'),

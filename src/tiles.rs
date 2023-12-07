@@ -11,7 +11,7 @@ pub enum Tile {
 }
 
 impl Tile {
-    pub fn draw<D>(&self) -> <&str as Stylize>::Styled
+    pub fn draw_tile<D>(&self) -> <&str as Stylize>::Styled
     where
         D: Display,
     {
