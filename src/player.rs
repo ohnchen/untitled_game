@@ -31,23 +31,27 @@ impl Player {
     pub fn move_direction(&mut self, map: &Map, direction: Direction, length: u16) {
         match direction {
             Direction::Left => {
-                while self.can_go_left(&map, &Tile::Rock) && self.x > saturated_sub(self.x, length) {
+                let new_x = saturated_sub(self.x, length); 
+                while self.can_go_left(&map, &Tile::Rock) && self.x > new_x {
                     self.x -= 1;
                 }
             },
             Direction::Right => {
-                while self.can_go_right(&map, &Tile::Rock) && self.x < saturated_sub(self.x, length) {
+                let new_x = saturated_add(self.x, length, map.width); 
+                while self.can_go_right(&map, &Tile::Rock) && self.x < new_x {
                     self.x += 1;
                 }
             }, 
             Direction::Up => {
-                while self.can_go_up(&map, &Tile::Rock) && self.x > saturated_sub(self.x, length) {
-                    self.x -= 1;
+                let new_y = saturated_sub(self.y, length); 
+                while self.can_go_up(&map, &Tile::Rock) && self.y > new_y {
+                    self.y -= 1;
                 }
             }, 
             Direction::Down => {
-                while self.can_go_down(&map, &Tile::Rock) && self.x < saturated_sub(self.x, length) {
-                    self.x -= 1;
+                let new_y = saturated_add(self.y, length, map.width); 
+                while self.can_go_down(&map, &Tile::Rock) && self.y < new_y {
+                    self.y += 1;
                 }
             },
         }
@@ -69,7 +73,7 @@ impl Player {
     }
 
     fn can_go_down(&self, map: &Map, block_tile: &Tile) -> bool {
-        !map.get_tile(self.x, saturated_add(self.x, 1, map.width))
+        !map.get_tile(self.x, saturated_add(self.y, 1, map.width))
             .eq(block_tile)
     }
 }
