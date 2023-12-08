@@ -77,14 +77,14 @@ fn main() -> io::Result<()> {
                     )?;
                 }
                 event::KeyCode::Char(c) => match c {
-                    'h' => player.move_direction(&map, Direction::Left, 1),
-                    'l' => player.move_direction(&map, Direction::Right, 1),
-                    'j' => player.move_direction(&map, Direction::Down, 1),
-                    'k' => player.move_direction(&map, Direction::Up, 1),
-                    'H' => player.move_direction(&map, Direction::Left, 3),
-                    'L' => player.move_direction(&map, Direction::Right, 3),
-                    'J' => player.move_direction(&map, Direction::Down, 3),
-                    'K' => player.move_direction(&map, Direction::Up, 3),
+                    'h' => player.move_direction(&mut map, Direction::Left, 1)?,
+                    'l' => player.move_direction(&mut map, Direction::Right, 1)?,
+                    'j' => player.move_direction(&mut map, Direction::Down, 1)?,
+                    'k' => player.move_direction(&mut map, Direction::Up, 1)?,
+                    //'H' => player.move_direction(&map, Direction::Left, 3)?,
+                    //'L' => player.move_direction(&map, Direction::Right, 3)?,
+                    //'J' => player.move_direction(&map, Direction::Down, 3)?,
+                    //'K' => player.move_direction(&map, Direction::Up, 3)?,
                     _ => {}
                 },
                 _ => {}

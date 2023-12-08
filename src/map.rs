@@ -2,7 +2,7 @@ use crossterm::{
     cursor::{MoveLeft, MoveTo, MoveToRow},
     queue,
     style::{Color, Print, PrintStyledContent, Stylize},
-    terminal,
+    terminal, execute,
 };
 use perlin_noise::PerlinNoise;
 use std::io::{self, Write};
@@ -32,6 +32,16 @@ impl Map {
         self.map_tiles[y as usize][x as usize]
     }
 
+    pub fn set_tile(&mut self, x: u16, y: u16, tile: Tile) {
+        self.map_tiles[y as usize][x as usize] = tile;
+    }
+
+    pub fn mine_option(&self, x: u16, y: u16, t: bool) -> io::Result<()> {
+        let to_mine = self.get_tile(x,y);
+        execute!(io::stdout(), MoveTo(x,y), PrintStyledContent(to_mine.draw_tile::<&str>(t)))?;
+        Ok(())
+    }
+
     pub fn draw_map(&self, xmin: usize, xmax: usize, ymin: usize, ymax: usize) -> io::Result<()> {
         for x in xmin..xmax {
             for y in ymin..ymax {
@@ -39,7 +49,7 @@ impl Map {
                 queue!(
                     io::stdout(),
                     MoveTo(x as u16, y as u16),
-                    PrintStyledContent(tile.draw_tile::<&str>())
+                    PrintStyledContent(tile.draw_tile::<&str>(false))
                 )?;
             }
         }
@@ -63,7 +73,7 @@ impl Map {
             io::stdout(),
             MoveTo(current_pos.0, current_pos.1),
             PrintStyledContent(
-                self.map_tiles[current_pos.1 as usize][current_pos.0 as usize].draw_tile::<&str>()
+                self.map_tiles[current_pos.1 as usize][current_pos.0 as usize].draw_tile::<&str>(false)
             ),
             MoveTo(player.x, player.y),
             Print('X'),
