@@ -19,8 +19,8 @@ impl Info {
                 io::stdout(),
                 MoveTo(xmin as u16, ymin as u16),
                 Print(format!(
-                    "map: {} {}, player: {} {}",
-                    map.width, map.height, player.x, player.y
+                    "map: {} {}, player: {} {}, inv: {:?}",
+                    map.width, map.height, player.x, player.y, player.tools
                 ))
             )?;
             return Ok(());

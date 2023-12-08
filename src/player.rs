@@ -8,7 +8,7 @@ pub enum Direction {
     Down,
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Tools {
     Pickaxe,
 }
@@ -25,7 +25,7 @@ impl Player {
         Self {
             x,
             y,
-            tools: Vec::new(),
+            tools: vec![Tools::Pickaxe],
         }
     }
 
