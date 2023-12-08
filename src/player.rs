@@ -33,37 +33,53 @@ impl Player {
         }
     }
 
-    pub fn move_direction(&mut self, map: &mut Map, direction: Direction, length: u16) -> io::Result<()>{
-        let mut mine = false;
+    pub fn move_direction(
+        &mut self,
+        map: &mut Map,
+        direction: Direction,
+        length: u16,
+    ) -> io::Result<()> {
         match direction {
             Direction::Left => {
                 let new_x = saturated_sub(self.x, length);
-                if !self.can_go_left(&map, &Tile::Rock) { mine = self.mine(map, new_x, self.y)?; };
-                while (self.can_go_left(&map, &Tile::Rock) || mine) && self.x > new_x {
+                if !self.can_go_left(&map, &Tile::Rock) && self.tools.contains(&Tools::Pickaxe) {
+                    self.mine(map, new_x, self.y)?;
+                    return Ok(());
+                };
+                while self.can_go_left(&map, &Tile::Rock) && self.x > new_x {
                     self.x -= 1;
                 }
                 Ok(())
             }
             Direction::Right => {
                 let new_x = saturated_add(self.x, length, map.width);
-                if !self.can_go_right(&map, &Tile::Rock) { mine = self.mine(map, new_x, self.y)?; };
-                while (self.can_go_right(&map, &Tile::Rock) || mine) && self.x < new_x {
+                if !self.can_go_right(&map, &Tile::Rock) && self.tools.contains(&Tools::Pickaxe) {
+                    self.mine(map, new_x, self.y)?;
+                    return Ok(());
+                };
+                while self.can_go_right(&map, &Tile::Rock) && self.x < new_x {
                     self.x += 1;
                 }
                 Ok(())
             }
             Direction::Up => {
                 let new_y = saturated_sub(self.y, length);
-                if !self.can_go_up(&map, &Tile::Rock) { mine = self.mine(map, self.x, new_y)?; };
-                while (self.can_go_up(&map, &Tile::Rock) || mine) && self.y > new_y {
+                if !self.can_go_up(&map, &Tile::Rock) && self.tools.contains(&Tools::Pickaxe) {
+                    self.mine(map, self.x, new_y)?;
+                    return Ok(());
+                };
+                while self.can_go_up(&map, &Tile::Rock) && self.y > new_y {
                     self.y -= 1;
                 }
                 Ok(())
             }
             Direction::Down => {
                 let new_y = saturated_add(self.y, length, map.height);
-                if !self.can_go_down(&map, &Tile::Rock) { mine = self.mine(map, self.x, new_y)?; };
-                while (self.can_go_down(&map, &Tile::Rock) || mine) && self.y < new_y {
+                if !self.can_go_down(&map, &Tile::Rock) && self.tools.contains(&Tools::Pickaxe) {
+                    self.mine(map, self.x, new_y)?;
+                    return Ok(());
+                };
+                while self.can_go_down(&map, &Tile::Rock) && self.y < new_y {
                     self.y += 1;
                 }
                 Ok(())
@@ -72,19 +88,20 @@ impl Player {
     }
 
     fn mine(&mut self, map: &mut Map, x: u16, y: u16) -> io::Result<bool> {
+        let mut mined = false;
         map.mine_option(x, y, true)?;
         match event::read()? {
             event::Event::Key(key_event) => match key_event.code {
-                KeyCode::Char(' ') => { 
+                KeyCode::Char(' ') => {
                     map.set_tile(x, y, Tile::Mine);
-                    return Ok(true);
-                },
-                _ => {},
+                    mined = true;
+                }
+                _ => {}
             },
-            _ => {},
+            _ => {}
         };
         map.mine_option(x, y, false)?;
-        Ok(false)
+        Ok(mined)
     }
 
     fn can_go_left(&self, map: &Map, block_tile: &Tile) -> bool {

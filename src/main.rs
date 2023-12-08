@@ -9,6 +9,7 @@ use crossterm::{
         LeaveAlternateScreen,
     },
 };
+use player::Tools;
 use std::io::{self, Write};
 
 mod info;
@@ -81,6 +82,13 @@ fn main() -> io::Result<()> {
                     'l' => player.move_direction(&mut map, Direction::Right, 1)?,
                     'j' => player.move_direction(&mut map, Direction::Down, 1)?,
                     'k' => player.move_direction(&mut map, Direction::Up, 1)?,
+                    'p' => {
+                        if player.tools.contains(&Tools::Pickaxe) {
+                            player.tools.clear();
+                        } else {
+                            player.tools.push(Tools::Pickaxe);
+                        }
+                    }
                     //'H' => player.move_direction(&map, Direction::Left, 3)?,
                     //'L' => player.move_direction(&map, Direction::Right, 3)?,
                     //'J' => player.move_direction(&map, Direction::Down, 3)?,
