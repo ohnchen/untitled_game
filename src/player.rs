@@ -106,7 +106,8 @@ impl Player {
                         Items::Rock(num) => Items::Rock(num + 1),
                         Items::Seed(i) => Items::Seed(*i),
                     }}).collect();
-                    return Ok(true);
+                    mined = true;
+                    return Ok(mined);
                 }
                 _ => {}
             },

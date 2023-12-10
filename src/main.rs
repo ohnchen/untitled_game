@@ -9,7 +9,6 @@ use crossterm::{
         LeaveAlternateScreen,
     },
 };
-use player::Tools;
 use std::io::{self, Write};
 
 mod info;
