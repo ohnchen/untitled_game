@@ -44,6 +44,10 @@ impl Player {
         }
     }
 
+    pub fn has_pickaxe(&self) -> bool {
+        self.tools.contains(&Tools::Pickaxe) 
+    }
+
     pub fn move_direction(
         &mut self,
         map: &mut Map,
@@ -135,9 +139,5 @@ impl Player {
     fn can_go_down(&self, map: &Map, block_tile: &Tile) -> bool {
         !map.get_tile(self.x, saturated_add(self.y, 1, map.height))
             .eq(block_tile)
-    }
-
-    fn has_pickaxe(&self) -> bool {
-        self.tools.contains(&Tools::Pickaxe) 
     }
 }

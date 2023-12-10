@@ -82,7 +82,7 @@ fn main() -> io::Result<()> {
                     'j' => player.move_direction(&mut map, Direction::Down, 1)?,
                     'k' => player.move_direction(&mut map, Direction::Up, 1)?,
                     'p' => {
-                        if player.tools.contains(&Tools::Pickaxe) {
+                        if player.has_pickaxe() {
                             player.tools.clear();
                         } else {
                             player.tools.push(Tools::Pickaxe);

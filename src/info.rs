@@ -13,7 +13,7 @@ impl Info {
         Self { debug }
     }
 
-    pub fn draw_info(&self, map: &Map, player: &Player, xmin: usize, xmax: usize, ymin: usize, ymax: usize) -> io::Result<()> {
+    pub fn draw_info(&self, map: &Map, player: &Player, xmin: usize, _xmax: usize, ymin: usize, _ymax: usize) -> io::Result<()> {
         if self.debug {
             queue!(
                 io::stdout(),
@@ -26,13 +26,6 @@ impl Info {
             )?;
             return Ok(());
         }
-
-        for x in xmin..xmax {
-            for y in ymin..ymax {
-                queue!(io::stdout(), MoveTo(x as u16, y as u16), Print("i"),)?;
-            }
-        }
-
         Ok(())
     }
 }
