@@ -19,7 +19,7 @@ mod utils;
 
 use crate::info::Info;
 use crate::map::Map;
-use crate::player::{Direction, Player};
+use crate::player::{Direction, Player, Tools};
 
 fn main() -> io::Result<()> {
     enable_raw_mode()?;
@@ -81,6 +81,13 @@ fn main() -> io::Result<()> {
                     'l' => player.move_direction(&mut map, Direction::Right, 1)?,
                     'j' => player.move_direction(&mut map, Direction::Down, 1)?,
                     'k' => player.move_direction(&mut map, Direction::Up, 1)?,
+                    'p' => {
+                        if player.tools.contains(&Tools::Pickaxe) {
+                            player.tools.clear();
+                        } else {
+                            player.tools.push(Tools::Pickaxe);
+                        }
+                    },
                     //'H' => player.move_direction(&map, Direction::Left, 3)?,
                     //'L' => player.move_direction(&map, Direction::Right, 3)?,
                     //'J' => player.move_direction(&map, Direction::Down, 3)?,

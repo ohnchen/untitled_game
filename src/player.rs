@@ -17,10 +17,17 @@ pub enum Tools {
     Pickaxe,
 }
 
+#[derive(Debug, PartialEq, Eq)]
+pub enum Items {
+    Rock(u32), 
+    Seed(u32),
+}
+
 pub struct Player {
     pub x: u16,
     pub y: u16,
     pub tools: Vec<Tools>,
+    pub items: Vec<Items>,
 }
 
 impl Player {
@@ -29,16 +36,27 @@ impl Player {
         Self {
             x,
             y,
-            tools: vec![Tools::Pickaxe],
+            tools: vec![],
+            items: vec![
+                Items::Rock(0),
+                Items::Seed(0),
+            ],
         }
     }
 
-    pub fn move_direction(&mut self, map: &mut Map, direction: Direction, length: u16) -> io::Result<()>{
+    pub fn move_direction(
+        &mut self,
+        map: &mut Map,
+        direction: Direction,
+        length: u16,
+    ) -> io::Result<()> {
         let mut mine = false;
         match direction {
             Direction::Left => {
                 let new_x = saturated_sub(self.x, length);
-                if !self.can_go_left(&map, &Tile::Rock) { mine = self.mine(map, new_x, self.y)?; };
+                if !self.can_go_left(&map, &Tile::Rock) && self.has_pickaxe() {
+                    mine = self.mine(map, new_x, self.y)?;
+                };
                 while (self.can_go_left(&map, &Tile::Rock) || mine) && self.x > new_x {
                     self.x -= 1;
                 }
@@ -46,7 +64,9 @@ impl Player {
             }
             Direction::Right => {
                 let new_x = saturated_add(self.x, length, map.width);
-                if !self.can_go_right(&map, &Tile::Rock) { mine = self.mine(map, new_x, self.y)?; };
+                if !self.can_go_right(&map, &Tile::Rock) && self.has_pickaxe() {
+                    mine = self.mine(map, new_x, self.y)?;
+                };
                 while (self.can_go_right(&map, &Tile::Rock) || mine) && self.x < new_x {
                     self.x += 1;
                 }
@@ -54,7 +74,9 @@ impl Player {
             }
             Direction::Up => {
                 let new_y = saturated_sub(self.y, length);
-                if !self.can_go_up(&map, &Tile::Rock) { mine = self.mine(map, self.x, new_y)?; };
+                if !self.can_go_up(&map, &Tile::Rock) && self.has_pickaxe() {
+                    mine = self.mine(map, self.x, new_y)?;
+                };
                 while (self.can_go_up(&map, &Tile::Rock) || mine) && self.y > new_y {
                     self.y -= 1;
                 }
@@ -62,7 +84,9 @@ impl Player {
             }
             Direction::Down => {
                 let new_y = saturated_add(self.y, length, map.height);
-                if !self.can_go_down(&map, &Tile::Rock) { mine = self.mine(map, self.x, new_y)?; };
+                if !self.can_go_down(&map, &Tile::Rock) && self.has_pickaxe() {
+                    mine = self.mine(map, self.x, new_y)?;
+                };
                 while (self.can_go_down(&map, &Tile::Rock) || mine) && self.y < new_y {
                     self.y += 1;
                 }
@@ -75,13 +99,17 @@ impl Player {
         map.mine_option(x, y, true)?;
         match event::read()? {
             event::Event::Key(key_event) => match key_event.code {
-                KeyCode::Char(' ') => { 
+                KeyCode::Char(' ') => {
                     map.set_tile(x, y, Tile::Mine);
+                    self.items = self.items.iter().map(|r| {match r {
+                        Items::Rock(num) => Items::Rock(num + 1),
+                        Items::Seed(i) => Items::Seed(*i),
+                    }}).collect();
                     return Ok(true);
-                },
-                _ => {},
+                }
+                _ => {}
             },
-            _ => {},
+            _ => {}
         };
         map.mine_option(x, y, false)?;
         Ok(false)
@@ -105,5 +133,9 @@ impl Player {
     fn can_go_down(&self, map: &Map, block_tile: &Tile) -> bool {
         !map.get_tile(self.x, saturated_add(self.y, 1, map.height))
             .eq(block_tile)
+    }
+
+    fn has_pickaxe(&self) -> bool {
+        self.tools.contains(&Tools::Pickaxe) 
     }
 }

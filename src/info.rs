@@ -1,4 +1,4 @@
-use crossterm::{cursor::MoveTo, queue, style::Print};
+use crossterm::{cursor::MoveTo, queue, style::Print, terminal::{Clear, ClearType}};
 use std::io::{self, Write};
 
 use crate::map::Map;
@@ -18,9 +18,10 @@ impl Info {
             queue!(
                 io::stdout(),
                 MoveTo(xmin as u16, ymin as u16),
+                Clear(ClearType::FromCursorDown),
                 Print(format!(
-                    "map: {} {}, player: {} {}, inv: {:?}",
-                    map.width, map.height, player.x, player.y, player.tools
+                    "map: {} {}, player: {} {}, tools: {:?}, inv: {:?}",
+                    map.width, map.height, player.x, player.y, player.tools, player.items,
                 ))
             )?;
             return Ok(());
