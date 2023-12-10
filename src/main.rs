@@ -9,6 +9,7 @@ use crossterm::{
         LeaveAlternateScreen,
     },
 };
+use player::Tools;
 use std::io::{self, Write};
 
 mod info;
@@ -88,10 +89,6 @@ fn main() -> io::Result<()> {
                             player.tools.push(Tools::Pickaxe);
                         }
                     },
-                    //'H' => player.move_direction(&map, Direction::Left, 3)?,
-                    //'L' => player.move_direction(&map, Direction::Right, 3)?,
-                    //'J' => player.move_direction(&map, Direction::Down, 3)?,
-                    //'K' => player.move_direction(&map, Direction::Up, 3)?,
                     _ => {}
                 },
                 _ => {}

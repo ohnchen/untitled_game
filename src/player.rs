@@ -96,6 +96,7 @@ impl Player {
     }
 
     fn mine(&mut self, map: &mut Map, x: u16, y: u16) -> io::Result<bool> {
+        let mut mined = false;
         map.mine_option(x, y, true)?;
         match event::read()? {
             event::Event::Key(key_event) => match key_event.code {
@@ -112,7 +113,7 @@ impl Player {
             _ => {}
         };
         map.mine_option(x, y, false)?;
-        Ok(false)
+        Ok(mined)
     }
 
     fn can_go_left(&self, map: &Map, block_tile: &Tile) -> bool {
