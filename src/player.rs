@@ -60,6 +60,7 @@ impl Player {
                 let new_x = saturated_sub(self.x, length);
                 if !self.can_go_left(&map, &Tile::Rock) && self.has_pickaxe() {
                     mine = self.mine(map, new_x, self.y)?;
+                    return Ok(());
                 };
                 while (self.can_go_left(&map, &Tile::Rock) || mine) && self.x > new_x {
                     self.x -= 1;
@@ -70,6 +71,7 @@ impl Player {
                 let new_x = saturated_add(self.x, length, map.width);
                 if !self.can_go_right(&map, &Tile::Rock) && self.has_pickaxe() {
                     mine = self.mine(map, new_x, self.y)?;
+                    return Ok(());
                 };
                 while (self.can_go_right(&map, &Tile::Rock) || mine) && self.x < new_x {
                     self.x += 1;
@@ -80,6 +82,7 @@ impl Player {
                 let new_y = saturated_sub(self.y, length);
                 if !self.can_go_up(&map, &Tile::Rock) && self.has_pickaxe() {
                     mine = self.mine(map, self.x, new_y)?;
+                    return Ok(());
                 };
                 while (self.can_go_up(&map, &Tile::Rock) || mine) && self.y > new_y {
                     self.y -= 1;
@@ -90,6 +93,7 @@ impl Player {
                 let new_y = saturated_add(self.y, length, map.height);
                 if !self.can_go_down(&map, &Tile::Rock) && self.has_pickaxe() {
                     mine = self.mine(map, self.x, new_y)?;
+                    return Ok(());
                 };
                 while (self.can_go_down(&map, &Tile::Rock) || mine) && self.y < new_y {
                     self.y += 1;
@@ -111,7 +115,6 @@ impl Player {
                         Items::Seed(i) => Items::Seed(*i),
                     }}).collect();
                     mined = true;
-                    return Ok(mined);
                 }
                 _ => {}
             },
