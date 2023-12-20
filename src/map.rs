@@ -108,6 +108,8 @@ impl Map {
                 }
             }
         }
+        // tmp: Merchants should also be generated as structures...
+        tiles[height-10][width-10] = Tile::Merchant;
 
         (tiles, spawnpoint)
     }

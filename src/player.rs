@@ -54,15 +54,14 @@ impl Player {
         direction: Direction,
         length: u16,
     ) -> io::Result<()> {
-        let mut mine = false;
         match direction {
             Direction::Left => {
                 let new_x = saturated_sub(self.x, length);
                 if !self.can_go_left(&map, &Tile::Rock) && self.has_pickaxe() {
-                    mine = self.mine(map, new_x, self.y)?;
+                    self.mine(map, new_x, self.y)?;
                     return Ok(());
                 };
-                while (self.can_go_left(&map, &Tile::Rock) || mine) && self.x > new_x {
+                while (self.can_go_left(&map, &Tile::Rock)) && self.x > new_x {
                     self.x -= 1;
                 }
                 Ok(())
@@ -70,10 +69,10 @@ impl Player {
             Direction::Right => {
                 let new_x = saturated_add(self.x, length, map.width);
                 if !self.can_go_right(&map, &Tile::Rock) && self.has_pickaxe() {
-                    mine = self.mine(map, new_x, self.y)?;
+                    self.mine(map, new_x, self.y)?;
                     return Ok(());
                 };
-                while (self.can_go_right(&map, &Tile::Rock) || mine) && self.x < new_x {
+                while (self.can_go_right(&map, &Tile::Rock)) && self.x < new_x {
                     self.x += 1;
                 }
                 Ok(())
@@ -81,10 +80,10 @@ impl Player {
             Direction::Up => {
                 let new_y = saturated_sub(self.y, length);
                 if !self.can_go_up(&map, &Tile::Rock) && self.has_pickaxe() {
-                    mine = self.mine(map, self.x, new_y)?;
+                    self.mine(map, self.x, new_y)?;
                     return Ok(());
                 };
-                while (self.can_go_up(&map, &Tile::Rock) || mine) && self.y > new_y {
+                while (self.can_go_up(&map, &Tile::Rock)) && self.y > new_y {
                     self.y -= 1;
                 }
                 Ok(())
@@ -92,15 +91,22 @@ impl Player {
             Direction::Down => {
                 let new_y = saturated_add(self.y, length, map.height);
                 if !self.can_go_down(&map, &Tile::Rock) && self.has_pickaxe() {
-                    mine = self.mine(map, self.x, new_y)?;
+                    self.mine(map, self.x, new_y)?;
                     return Ok(());
                 };
-                while (self.can_go_down(&map, &Tile::Rock) || mine) && self.y < new_y {
+                while (self.can_go_down(&map, &Tile::Rock)) && self.y < new_y {
                     self.y += 1;
                 }
                 Ok(())
             }
         }
+    }
+
+    pub fn is_on_merchant(&self, map: &Map) -> bool {
+        if map.get_tile(self.x, self.y) == Tile::Merchant {
+            return true;
+        }
+        return false;
     }
 
     fn mine(&mut self, map: &mut Map, x: u16, y: u16) -> io::Result<bool> {

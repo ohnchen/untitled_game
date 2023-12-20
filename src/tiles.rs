@@ -9,6 +9,9 @@ pub enum Tile {
     Rock,
     Mine,
 
+    NPC,
+    Merchant,
+    
     Empty,
 }
 
@@ -21,8 +24,10 @@ impl Tile {
         match self {
             Tile::Grass => return "g".with(Color::DarkGreen),
             Tile::Water => return "w".with(Color::Blue),
+            Tile::NPC => return "N".with(Color::DarkYellow),
+            Tile::Merchant => return "M".with(Color::DarkYellow),
             Tile::Rock => return "r".with(Color::Grey),
-            Tile::Mine => return "\"".with(Color::DarkGrey), 
+            Tile::Mine => return "o".with(Color::DarkGrey), 
             _ => return "e".with(Color::DarkGrey),
         }
     }
