@@ -5,24 +5,6 @@ use std::io;
 use crate::utils::*;
 use crate::{map::Map, tiles::Tile};
 
-pub enum Direction {
-    Left,
-    Right,
-    Up,
-    Down,
-}
-
-#[derive(Debug, PartialEq, Eq)]
-pub enum Tools {
-    Pickaxe,
-}
-
-#[derive(Debug, PartialEq, Eq)]
-pub enum Items {
-    Rock(u32), 
-    Seed(u32),
-}
-
 pub struct Player {
     pub x: u16,
     pub y: u16,

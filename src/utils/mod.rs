@@ -15,3 +15,21 @@ pub fn saturated_add(op1: u16, op2: u16, max: u16) -> u16 {
         return sum as u16;
     }
 }
+
+pub enum Direction {
+    Left,
+    Right,
+    Up,
+    Down,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum Tools {
+    Pickaxe,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum Items {
+    Rock(u32), 
+    Seed(u32),
+}

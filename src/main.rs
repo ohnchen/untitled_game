@@ -14,12 +14,14 @@ use std::io::{self, Write};
 mod info;
 mod map;
 mod player;
+mod trader;
 mod tiles;
 mod utils;
 
+use crate::utils::*;
 use crate::info::Info;
 use crate::map::Map;
-use crate::player::{Direction, Player, Tools};
+use crate::player::Player;
 
 fn main() -> io::Result<()> {
     enable_raw_mode()?;
@@ -42,7 +44,7 @@ fn main() -> io::Result<()> {
 
     let mut player = Player::new(&map);
 
-    let info = Info::new(true);
+    let info = Info::new(false);
     info.draw_info(
         &map,
         &player,
