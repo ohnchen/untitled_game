@@ -39,7 +39,10 @@ fn main() -> io::Result<()> {
     let info_height: u16 = game_height / 6;
     let map_height: u16 = game_height - info_height;
 
-    let mut map = Map::new(470, 470, game_width, map_height);
+    let left = 170;
+    let top = 170;
+
+    let mut map = Map::new(left, top, game_width, map_height);
     let mut player = Player::new(&map);
     let info = Info::new(false);
 
@@ -67,7 +70,7 @@ fn main() -> io::Result<()> {
             event::Event::Key(key_event) => match key_event.code {
                 event::KeyCode::Esc => break,
                 event::KeyCode::F(5) => {
-                    map = Map::new(470, 470, game_width, map_height);
+                    map = Map::new(left, top, game_width, map_height);
                     player = Player::new(&map);
                     map.draw_map()?;
                     execute!(

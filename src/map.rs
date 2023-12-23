@@ -23,15 +23,15 @@ pub struct Map {
 
 impl Map {
     pub fn new(viewleft: u16, viewtop: u16, viewwidth: u16, viewheight: u16) -> Self {
-        let map_tiles = Self::generate_map();
+        let map_tiles = Self::generate_map(500, 500);
         Self {
             viewleft,  
             viewtop,
             viewwidth,
             viewheight,
-            width: 1000,
-            height: 1000,
-            spawnpoint: (500, 500),
+            width: 500,
+            height: 500,
+            spawnpoint: (200, 200),
             map_tiles,
         }
     }
@@ -89,9 +89,7 @@ impl Map {
         Ok(())
     }
 
-    fn generate_map() -> Vec<Vec<Tile>> {
-        let width = 1000;
-        let height = 1000;
+    fn generate_map(width: usize, height: usize) -> Vec<Vec<Tile>> {
         let mut tiles: Vec<Vec<Tile>> = vec![vec![Tile::Empty; width]; height];
         let perl = PerlinNoise::new();
         let scale: f64 = 37.7193;

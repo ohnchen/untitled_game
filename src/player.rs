@@ -48,7 +48,7 @@ impl Player {
                 while (self.can_go_left(&map, &Tile::Rock)) && self.x > new_x {
                     self.x -= 1;
                     if self.x < map.viewleft {
-                        map.viewleft -= map.viewwidth;    
+                        map.viewleft = saturated_sub(map.viewleft, map.viewwidth, 0);    
                         map.draw_map()?;
                     }
                 }
@@ -63,7 +63,7 @@ impl Player {
                 while (self.can_go_right(&map, &Tile::Rock)) && self.x < new_x {
                     self.x += 1;
                     if self.x > map.viewleft + map.viewwidth {
-                        map.viewleft += map.viewwidth;    
+                        map.viewleft = saturated_add(map.viewleft, map.viewwidth, map.width-1);    
                         map.draw_map()?;
                     }
                 }
@@ -78,7 +78,7 @@ impl Player {
                 while (self.can_go_up(&map, &Tile::Rock)) && self.y > new_y {
                     self.y -= 1;
                     if self.y < map.viewtop {
-                        map.viewtop -= map.viewheight;    
+                        map.viewtop = saturated_sub(map.viewtop, map.viewheight, 0);    
                         map.draw_map()?;
                     }
                 }
@@ -93,7 +93,7 @@ impl Player {
                 while (self.can_go_down(&map, &Tile::Rock)) && self.y < new_y {
                     self.y += 1;
                     if self.y > map.viewtop + map.viewheight {
-                        map.viewtop += map.viewheight;    
+                        map.viewtop = saturated_add(map.viewtop, map.viewheight, map.height-1);    
                         map.draw_map()?;
                     }
                 }
