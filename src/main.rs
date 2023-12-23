@@ -36,24 +36,22 @@ fn main() -> io::Result<()> {
 
     let game_width: u16 = terminal::size()?.0;
     let game_height: u16 = terminal::size()?.1;
-    let info_height: u16 = game_height / 6;
-    let map_height: u16 = game_height - info_height;
+    let info_viewheight: u16 = game_height / 6;
+    let map_viewheight: u16 = game_height - info_viewheight;
 
-    let left = 170;
-    let top = 170;
+    let left = 220;
+    let top = 220;
+    let map_width = 500;
+    let map_height = 500;
 
-    let mut map = Map::new(left, top, game_width, map_height);
+    let mut map = Map::new(map_width, map_height, left, top, game_width, map_viewheight);
     let mut player = Player::new(&map);
-    let info = Info::new(false);
+    let info = Info::new(true);
 
     map.draw_map()?;
     info.draw_info(
         &map,
-        &player,
-        0,
-        game_width.into(),
-        (map_height + 1).into(),
-        game_height.into(),
+        &player
     )?;
 
     execute!(
@@ -70,12 +68,12 @@ fn main() -> io::Result<()> {
             event::Event::Key(key_event) => match key_event.code {
                 event::KeyCode::Esc => break,
                 event::KeyCode::F(5) => {
-                    map = Map::new(left, top, game_width, map_height);
+                    map = Map::new(map_width, map_height, left, top, game_width, map_viewheight);
                     player = Player::new(&map);
                     map.draw_map()?;
                     execute!(
                         io::stdout(),
-                        MoveTo(map.spawnpoint.0, map.spawnpoint.1),
+                        MoveTo(map.spawnpoint.0 - map.viewleft, map.spawnpoint.1 - map.viewtop),
                         Print('X'),
                         MoveLeft(1)
                     )?;
@@ -129,10 +127,6 @@ fn main() -> io::Result<()> {
         info.draw_info(
             &map,
             &player,
-            0,
-            game_width.into(),
-            (map_height + 1).into(),
-            game_height.into(),
         )?;
         stdout.flush()?;
     }

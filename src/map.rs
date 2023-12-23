@@ -1,37 +1,38 @@
 use crossterm::{
     cursor::{MoveLeft, MoveTo, MoveToRow},
-    queue,
+    execute, queue,
     style::{Color, Print, PrintStyledContent, Stylize},
-    terminal, execute,
+    terminal,
 };
 use perlin_noise::PerlinNoise;
 use std::io::{self, Write};
 
 use crate::player::Player;
 use crate::tiles::Tile::{self, *};
+use crate::utils::*;
 
 pub struct Map {
+    pub width: u16,
+    pub height: u16,
     pub viewleft: u16,
     pub viewtop: u16,
     pub viewwidth: u16,
     pub viewheight: u16,
-    pub width: u16,
-    pub height: u16,
     pub spawnpoint: (u16, u16),
     map_tiles: Vec<Vec<Tile>>,
 }
 
 impl Map {
-    pub fn new(viewleft: u16, viewtop: u16, viewwidth: u16, viewheight: u16) -> Self {
-        let map_tiles = Self::generate_map(500, 500);
+    pub fn new(width: u16, height: u16, viewleft: u16, viewtop: u16, viewwidth: u16, viewheight: u16) -> Self {
+        let map_tiles = Self::generate_map(width.into(), height.into());
         Self {
-            viewleft,  
+            width,
+            height,
+            viewleft,
             viewtop,
             viewwidth,
             viewheight,
-            width: 500,
-            height: 500,
-            spawnpoint: (200, 200),
+            spawnpoint: (width/2, height/2),
             map_tiles,
         }
     }
@@ -45,8 +46,12 @@ impl Map {
     }
 
     pub fn mine_option(&self, x: u16, y: u16, t: bool) -> io::Result<()> {
-        let to_mine = self.get_tile(x,y);
-        execute!(io::stdout(), MoveTo(x - self.viewleft, y - self.viewtop), PrintStyledContent(to_mine.draw_tile::<&str>(t)))?;
+        let to_mine = self.get_tile(x, y);
+        execute!(
+            io::stdout(),
+            MoveTo(x - self.viewleft, y - self.viewtop),
+            PrintStyledContent(to_mine.draw_tile::<&str>(t))
+        )?;
         Ok(())
     }
 
@@ -78,11 +83,15 @@ impl Map {
     pub fn draw_player(&self, current_pos: (u16, u16), player: &Player) -> io::Result<()> {
         queue!(
             io::stdout(),
-            MoveTo(current_pos.0-self.viewleft, current_pos.1-self.viewtop),
-            PrintStyledContent(
-                self.map_tiles[current_pos.1 as usize][current_pos.0 as usize].draw_tile::<&str>(false)
+            MoveTo(
+                saturated_sub(current_pos.0, self.viewleft, 0),
+                saturated_sub(current_pos.1, self.viewtop, 0)
             ),
-            MoveTo(player.x - self.viewleft, player.y-self.viewtop),
+            PrintStyledContent(
+                self.map_tiles[current_pos.1 as usize][current_pos.0 as usize]
+                    .draw_tile::<&str>(false)
+            ),
+            MoveTo(player.x - self.viewleft, player.y - self.viewtop),
             Print('X'),
             MoveLeft(1),
         )?;
@@ -92,7 +101,7 @@ impl Map {
     fn generate_map(width: usize, height: usize) -> Vec<Vec<Tile>> {
         let mut tiles: Vec<Vec<Tile>> = vec![vec![Tile::Empty; width]; height];
         let perl = PerlinNoise::new();
-        let scale: f64 = 37.7193;
+        let scale: f64 = width as f64/32.7193;
 
         for x in 0..width {
             for y in 0..height {
@@ -112,6 +121,6 @@ impl Map {
         // tmp: Merchants should also be generated as structures...
         // tiles[height-10][width-10] = Tile::Merchant;
 
-        tiles 
+        tiles
     }
 }

@@ -43,18 +43,16 @@ impl Info {
         &self,
         map: &Map,
         player: &Player,
-        left: usize,
-        _right: usize,
-        top: usize,
-        _bottom: usize,
     ) -> io::Result<()> {
+        let left = map.viewwidth;
+        let top = map.viewheight;
         if self.debug {
             draw_info!(
                 left,
                 top,
                 "map: {} {}, player: {} {}, tools: {:?}, inv: {:?}",
-                map.viewwidth,
-                map.viewheight,
+                map.width,
+                map.height,
                 player.x,
                 player.y,
                 player.tools,
