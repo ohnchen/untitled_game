@@ -1,7 +1,7 @@
-pub fn saturated_sub(op1: u16, op2: u16) -> u16 {
+pub fn saturated_sub(op1: u16, op2: u16, min: u16) -> u16 {
     let diff: i32 = op1 as i32 - op2 as i32;
-    if diff < 0 {
-        return 0;
+    if diff < min.into() {
+        return min;
     } else {
         return diff as u16;
     }
@@ -33,3 +33,4 @@ pub enum Items {
     Rock(u32), 
     Seed(u32),
 }
+

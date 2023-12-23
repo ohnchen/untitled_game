@@ -13,15 +13,15 @@ use std::io::{self, Write};
 
 mod info;
 mod map;
+mod merchant;
 mod player;
-mod trader;
 mod tiles;
 mod utils;
 
-use crate::utils::*;
 use crate::info::Info;
 use crate::map::Map;
 use crate::player::Player;
+use crate::utils::*;
 
 fn main() -> io::Result<()> {
     enable_raw_mode()?;
@@ -39,12 +39,11 @@ fn main() -> io::Result<()> {
     let info_height: u16 = game_height / 6;
     let map_height: u16 = game_height - info_height;
 
-    let mut map = Map::new(game_width, map_height);
-    map.draw_map(0, game_width.into(), 0, map_height.into())?;
-
+    let mut map = Map::new(470, 470, game_width, map_height);
     let mut player = Player::new(&map);
-
     let info = Info::new(false);
+
+    map.draw_map()?;
     info.draw_info(
         &map,
         &player,
@@ -56,7 +55,7 @@ fn main() -> io::Result<()> {
 
     execute!(
         io::stdout(),
-        MoveTo(map.spawnpoint.0, map.spawnpoint.1),
+        MoveTo(map.spawnpoint.0 - map.viewleft, map.spawnpoint.1 - map.viewtop),
         Print('X'),
         MoveLeft(1)
     )?;
@@ -68,9 +67,9 @@ fn main() -> io::Result<()> {
             event::Event::Key(key_event) => match key_event.code {
                 event::KeyCode::Esc => break,
                 event::KeyCode::F(5) => {
-                    map = Map::new(game_width, map_height);
+                    map = Map::new(470, 470, game_width, map_height);
                     player = Player::new(&map);
-                    map.draw_map(0, game_width.into(), 0, map_height.into())?;
+                    map.draw_map()?;
                     execute!(
                         io::stdout(),
                         MoveTo(map.spawnpoint.0, map.spawnpoint.1),
@@ -89,7 +88,33 @@ fn main() -> io::Result<()> {
                         } else {
                             player.tools.push(Tools::Pickaxe);
                         }
-                    },
+                    }
+                    'b' => {
+                        if player.is_on_merchant(&map) {
+                            player.gold -= 1;
+                            player.items = player
+                                .items
+                                .iter()
+                                .map(|r| match r {
+                                    Items::Rock(i) => Items::Rock(*i),
+                                    Items::Seed(i) => Items::Seed(i + 1),
+                                })
+                                .collect();
+                        }
+                    }
+                    's' => {
+                        if player.is_on_merchant(&map) {
+                            player.gold += 1;
+                            player.items = player
+                                .items
+                                .iter()
+                                .map(|r| match r {
+                                    Items::Rock(i) => Items::Rock(*i),
+                                    Items::Seed(i) => Items::Seed(i - 1),
+                                })
+                                .collect();
+                        }
+                    }
                     _ => {}
                 },
                 _ => {}

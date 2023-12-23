@@ -10,6 +10,7 @@ pub struct Player {
     pub y: u16,
     pub tools: Vec<Tools>,
     pub items: Vec<Items>,
+    pub gold: u32,
 }
 
 impl Player {
@@ -23,6 +24,7 @@ impl Player {
                 Items::Rock(0),
                 Items::Seed(0),
             ],
+            gold: 100,
         }
     }
 
@@ -38,13 +40,17 @@ impl Player {
     ) -> io::Result<()> {
         match direction {
             Direction::Left => {
-                let new_x = saturated_sub(self.x, length);
+                let new_x = saturated_sub(self.x, length, 0);
                 if !self.can_go_left(&map, &Tile::Rock) && self.has_pickaxe() {
                     self.mine(map, new_x, self.y)?;
                     return Ok(());
                 };
                 while (self.can_go_left(&map, &Tile::Rock)) && self.x > new_x {
                     self.x -= 1;
+                    if self.x < map.viewleft {
+                        map.viewleft -= map.viewwidth;    
+                        map.draw_map()?;
+                    }
                 }
                 Ok(())
             }
@@ -56,17 +62,25 @@ impl Player {
                 };
                 while (self.can_go_right(&map, &Tile::Rock)) && self.x < new_x {
                     self.x += 1;
+                    if self.x > map.viewleft + map.viewwidth {
+                        map.viewleft += map.viewwidth;    
+                        map.draw_map()?;
+                    }
                 }
                 Ok(())
             }
             Direction::Up => {
-                let new_y = saturated_sub(self.y, length);
+                let new_y = saturated_sub(self.y, length, 0);
                 if !self.can_go_up(&map, &Tile::Rock) && self.has_pickaxe() {
                     self.mine(map, self.x, new_y)?;
                     return Ok(());
                 };
                 while (self.can_go_up(&map, &Tile::Rock)) && self.y > new_y {
                     self.y -= 1;
+                    if self.y < map.viewtop {
+                        map.viewtop -= map.viewheight;    
+                        map.draw_map()?;
+                    }
                 }
                 Ok(())
             }
@@ -78,6 +92,10 @@ impl Player {
                 };
                 while (self.can_go_down(&map, &Tile::Rock)) && self.y < new_y {
                     self.y += 1;
+                    if self.y > map.viewtop + map.viewheight {
+                        map.viewtop += map.viewheight;    
+                        map.draw_map()?;
+                    }
                 }
                 Ok(())
             }
@@ -113,22 +131,22 @@ impl Player {
     }
 
     fn can_go_left(&self, map: &Map, block_tile: &Tile) -> bool {
-        !map.get_tile(saturated_sub(self.x, 1), self.y)
+        !map.get_tile(saturated_sub(self.x, 1, map.viewleft), self.y)
             .eq(block_tile)
     }
 
     fn can_go_right(&self, map: &Map, block_tile: &Tile) -> bool {
-        !map.get_tile(saturated_add(self.x, 1, map.width), self.y)
+        !map.get_tile(saturated_add(self.x, 1, map.viewleft + map.viewwidth), self.y)
             .eq(block_tile)
     }
 
     fn can_go_up(&self, map: &Map, block_tile: &Tile) -> bool {
-        !map.get_tile(self.x, saturated_sub(self.y, 1))
+        !map.get_tile(self.x, saturated_sub(self.y, 1, map.viewtop))
             .eq(block_tile)
     }
 
     fn can_go_down(&self, map: &Map, block_tile: &Tile) -> bool {
-        !map.get_tile(self.x, saturated_add(self.y, 1, map.height))
+        !map.get_tile(self.x, saturated_add(self.y, 1, map.viewtop + map.viewheight))
             .eq(block_tile)
     }
 }
