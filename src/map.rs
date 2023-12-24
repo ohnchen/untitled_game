@@ -122,8 +122,10 @@ impl Map {
                 }
             }
         }
-        // tmp: Merchants should also be generated as structures...
-        // tiles[height-10][width-10] = Tile::Merchant;
+
+        // still need to implement this, but first better perlin-noise stuff
+        // more natural terrain generation
+        // generate_merchants();
 
         tiles
     }
