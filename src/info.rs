@@ -50,13 +50,14 @@ impl Info {
             draw_info!(
                 left,
                 top,
-                "map: {} {}, player: {} {}, tools: {:?}, inv: {:?}",
+                "map: {} {}, player: {} {}, tools: {:?}, inv: {:?}, gold: {:?}",
                 map.width,
                 map.height,
                 player.x,
                 player.y,
                 player.tools,
                 player.items,
+                player.gold,
             )?;
             return Ok(());
         }

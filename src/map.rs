@@ -85,7 +85,11 @@ impl Map {
             io::stdout(),
             MoveTo(
                 saturated_sub(current_pos.0, self.viewleft, 0),
-                saturated_sub(current_pos.1, self.viewtop, 0)
+                { if saturated_sub(current_pos.1, self.viewtop, 0) < self.viewheight {
+                    saturated_sub(current_pos.1, self.viewtop, 0) 
+                } else {
+                    self.viewheight - 1
+                } }
             ),
             PrintStyledContent(
                 self.map_tiles[current_pos.1 as usize][current_pos.0 as usize]

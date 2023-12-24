@@ -55,7 +55,7 @@ impl Player {
                 Ok(())
             }
             Direction::Right => {
-                let new_x = saturated_add(self.x, length, map.width);
+                let new_x = saturated_add(self.x, length, map.width-1);
                 if !self.can_go_right(&map, &Tile::Rock) && self.has_pickaxe() {
                     self.mine(map, new_x, self.y)?;
                     return Ok(());
@@ -63,7 +63,7 @@ impl Player {
                 while (self.can_go_right(&map, &Tile::Rock)) && self.x < new_x {
                     self.x += 1;
                     if self.x >= map.viewleft + map.viewwidth {
-                        map.viewleft = saturated_add(map.viewleft, map.viewwidth, map.width);    
+                        map.viewleft = saturated_add(map.viewleft, map.viewwidth, map.width-map.viewwidth);    
                         map.draw_map()?;
                     }
                 }
@@ -85,7 +85,7 @@ impl Player {
                 Ok(())
             }
             Direction::Down => {
-                let new_y = saturated_add(self.y, length, map.height);
+                let new_y = saturated_add(self.y, length, map.height-1);
                 if !self.can_go_down(&map, &Tile::Rock) && self.has_pickaxe() {
                     self.mine(map, self.x, new_y)?;
                     return Ok(());
@@ -93,7 +93,7 @@ impl Player {
                 while (self.can_go_down(&map, &Tile::Rock)) && self.y < new_y {
                     self.y += 1;
                     if self.y >= map.viewtop + map.viewheight {
-                        map.viewtop = saturated_add(map.viewtop, map.viewheight, map.height-1);    
+                        map.viewtop = saturated_add(map.viewtop, map.viewheight, map.height-map.viewheight);    
                         map.draw_map()?;
                     }
                 }
@@ -131,22 +131,22 @@ impl Player {
     }
 
     fn can_go_left(&self, map: &Map, block_tile: &Tile) -> bool {
-        !map.get_tile(saturated_sub(self.x, 1, map.viewleft), self.y)
+        !map.get_tile(saturated_sub(self.x, 1, 0), self.y)
             .eq(block_tile)
     }
 
     fn can_go_right(&self, map: &Map, block_tile: &Tile) -> bool {
-        !map.get_tile(saturated_add(self.x, 1, map.viewleft + map.viewwidth), self.y)
+        !map.get_tile(saturated_add(self.x, 1, map.width-1), self.y)
             .eq(block_tile)
     }
 
     fn can_go_up(&self, map: &Map, block_tile: &Tile) -> bool {
-        !map.get_tile(self.x, saturated_sub(self.y, 1, map.viewtop))
+        !map.get_tile(self.x, saturated_sub(self.y, 1, 0))
             .eq(block_tile)
     }
 
     fn can_go_down(&self, map: &Map, block_tile: &Tile) -> bool {
-        !map.get_tile(self.x, saturated_add(self.y, 1, map.viewtop + map.viewheight))
+        !map.get_tile(self.x, saturated_add(self.y, 1, map.height-1))
             .eq(block_tile)
     }
 }
