@@ -34,3 +34,8 @@ pub enum Items {
     Seed(u32),
 }
 
+pub trait Trader {
+    pub fn buys_item(&mut self, item: Items) -> bool;
+    pub fn sells_item(&mut self, item: Items) -> bool;
+    pub fn is_broke(&self) -> bool;
+}
