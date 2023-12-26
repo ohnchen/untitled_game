@@ -10,6 +10,10 @@ pub enum Tile {
     Mine,
 
     Merchant,
+
+    // Soil,
+    // WateredSoil,
+    // Crop,
     
     Empty,
 }

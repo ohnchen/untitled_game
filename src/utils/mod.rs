@@ -36,15 +36,27 @@ pub enum Items {
     Seed(u32),
 }
 
-impl Items {
-    pub fn same(&self, other: Items) -> bool {
-        match (*self, other) {
-            (Items::Rock(_), Items::Rock(_)) => true,
-            (Items::Seed(_), Items::Seed(_)) => true,
-            _ => false,
-        }
-    }
-}
+ impl Items {
+     pub fn is_more(&self, other: Items) -> bool {
+         match (*self, other) {
+             (Items::Rock(x), Items::Rock(y)) => {
+                 if x >= y {
+                    return true;
+                 } else {
+                    return false;
+                }
+             },
+             (Items::Seed(x), Items::Seed(y)) => {
+                if x >= y {
+                    return true;
+                } else {
+                    return false;
+                }
+            },
+             _ => false,
+         }
+     }
+ }
 
 impl Sub for Items {
     type Output = Items;

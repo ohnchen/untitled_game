@@ -99,14 +99,16 @@ fn main() -> io::Result<()> {
                     }
                     'b' => {
                         if !player.is_on_merchant(&map) { continue }
-                        if global_merchant.has_item(&Items::Seed(1)) {
-                        global_merchant.sells(Items::Seed(1), SEED_PRICE);
+                        if !player.is_broke() && global_merchant.has_item(&Items::Seed(1)) {
+                            global_merchant.sells(Items::Seed(1), SEED_PRICE);
+                            player.buys(Items::Seed(1), SEED_PRICE);
                         }
                     },
                     's' => {
                         if !player.is_on_merchant(&map) { continue };
-                        if !global_merchant.is_broke() {
+                        if !global_merchant.is_broke() && player.has_item(&Items::Seed(1)){
                             global_merchant.buys(Items::Seed(1), SEED_PRICE);
+                            player.sells(Items::Seed(1), SEED_PRICE);
                         }
                     }
                     _ => {}

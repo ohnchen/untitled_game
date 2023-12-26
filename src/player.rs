@@ -149,4 +149,30 @@ impl Player {
         !map.get_tile(self.x, saturated_add(self.y, 1, map.height-1))
             .eq(block_tile)
     }
+
+    pub fn is_broke(&self) -> bool {
+        self.gold == 0
+    }
+
+    pub fn has_item(&mut self, item: &Items) -> bool {
+        self.items.iter().any(|x| x.is_more(*item))
+    }
+
+    pub fn buys(&mut self, item: Items, cost: u32) {
+        self.items = self.items.iter().map(|ele| match (ele, item) {
+            (Items::Rock(x), Items::Rock(y)) => Items::Rock(x+y),
+            (Items::Seed(x), Items::Seed(y)) => Items::Seed(x+y),
+            _ => *ele,
+        }).collect();
+        self.gold -= cost;
+    }
+
+    pub fn sells(&mut self, item: Items, cost: u32) {
+        self.items = self.items.iter().map(|ele| match (ele, item) {
+            (Items::Rock(x), Items::Rock(y)) => Items::Rock(x-y),
+            (Items::Seed(x), Items::Seed(y)) => Items::Seed(x-y),
+            _ => *ele,
+        }).collect();
+        self.gold += cost;
+    }
 }

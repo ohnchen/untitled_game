@@ -18,7 +18,7 @@ impl Merchant {
     }
 
     pub fn has_item(&mut self, item: &Items) -> bool {
-        self.items.iter().any(|x| x.same(*item))
+        self.items.iter().any(|x| x.is_more(*item))
     }
 
     pub fn buys(&mut self, item: Items, cost: u32) {

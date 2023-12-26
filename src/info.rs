@@ -46,8 +46,8 @@ impl Info {
         player: &Player,
         merchant: &Merchant,
     ) -> io::Result<()> {
-        let left = map.viewwidth;
-        let top = map.viewheight;
+        let left = 0;
+        let top = map.viewheight + 1;
         if self.debug {
             draw_info!(
                 left,
