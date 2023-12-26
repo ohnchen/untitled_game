@@ -123,9 +123,7 @@ impl Map {
             }
         }
 
-        // still need to implement this, but first better perlin-noise stuff
-        // more natural terrain generation
-        // generate_merchants();
+        //generate_merchants(width, height);
 
         tiles
     }
