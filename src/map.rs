@@ -124,6 +124,7 @@ impl Map {
         }
 
         //generate_merchants(width, height);
+        tiles[250][250] = Tile::Merchant;
 
         tiles
     }

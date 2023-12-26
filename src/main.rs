@@ -20,8 +20,11 @@ mod utils;
 
 use crate::info::Info;
 use crate::map::Map;
+use crate::merchant::Merchant;
 use crate::player::Player;
 use crate::utils::*;
+
+static SEED_PRICE: u32 = 1;
 
 fn main() -> io::Result<()> {
     enable_raw_mode()?;
@@ -46,12 +49,16 @@ fn main() -> io::Result<()> {
 
     let mut map = Map::new(map_width, map_height, left, top, game_width, map_viewheight);
     let mut player = Player::new(&map);
+    
+    let mut global_merchant = Merchant::new();
+
     let info = Info::new(true);
 
     map.draw_map()?;
     info.draw_info(
         &map,
-        &player
+        &player,
+        &global_merchant,
     )?;
 
     execute!(
@@ -91,29 +98,15 @@ fn main() -> io::Result<()> {
                         }
                     }
                     'b' => {
-                        if player.is_on_merchant(&map) {
-                            player.gold -= 1;
-                            player.items = player
-                                .items
-                                .iter()
-                                .map(|r| match r {
-                                    Items::Rock(i) => Items::Rock(*i),
-                                    Items::Seed(i) => Items::Seed(i + 1),
-                                })
-                                .collect();
+                        if !player.is_on_merchant(&map) { continue }
+                        if global_merchant.has_item(&Items::Seed(1)) {
+                        global_merchant.sells(Items::Seed(1), SEED_PRICE);
                         }
-                    }
+                    },
                     's' => {
-                        if player.is_on_merchant(&map) {
-                            player.gold += 1;
-                            player.items = player
-                                .items
-                                .iter()
-                                .map(|r| match r {
-                                    Items::Rock(i) => Items::Rock(*i),
-                                    Items::Seed(i) => Items::Seed(i - 1),
-                                })
-                                .collect();
+                        if !player.is_on_merchant(&map) { continue };
+                        if !global_merchant.is_broke() {
+                            global_merchant.buys(Items::Seed(1), SEED_PRICE);
                         }
                     }
                     _ => {}
@@ -127,6 +120,7 @@ fn main() -> io::Result<()> {
         info.draw_info(
             &map,
             &player,
+            &global_merchant,
         )?;
         stdout.flush()?;
     }

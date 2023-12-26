@@ -6,8 +6,9 @@ use crossterm::{
 };
 use std::io::{self, Write};
 
-use crate::map::Map;
-use crate::player::Player;
+use crate::Map;
+use crate::Merchant;
+use crate::Player;
 
 macro_rules! clear_info {
     ($left:ident, $top:ident) => {
@@ -43,6 +44,7 @@ impl Info {
         &self,
         map: &Map,
         player: &Player,
+        merchant: &Merchant,
     ) -> io::Result<()> {
         let left = map.viewwidth;
         let top = map.viewheight;
@@ -50,7 +52,7 @@ impl Info {
             draw_info!(
                 left,
                 top,
-                "map: {} {}, player: {} {}, tools: {:?}, inv: {:?}, gold: {:?}",
+                "map: {} {}, PLAYER -> {} {}, tools: {:?}, inv: {:?}, gold: {:?}, MERCHANT -> gold: {}, inv: {:?}",
                 map.width,
                 map.height,
                 player.x,
@@ -58,6 +60,8 @@ impl Info {
                 player.tools,
                 player.items,
                 player.gold,
+                merchant.gold,
+                merchant.items,
             )?;
             return Ok(());
         }
