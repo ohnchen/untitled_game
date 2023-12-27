@@ -11,6 +11,7 @@ use crossterm::{
 };
 use std::io::{self, Write};
 
+mod config;
 mod info;
 mod map;
 mod merchant;
@@ -18,14 +19,13 @@ mod player;
 mod tiles;
 mod utils;
 
+use crate::config::*;
 use crate::info::Info;
 use crate::map::Map;
 use crate::merchant::Merchant;
 use crate::player::Player;
 use crate::utils::*;
 
-static SEED_PRICE: u32 = 1;
-static DEBUG: bool = false;
 
 fn main() -> io::Result<()> {
     enable_raw_mode()?;
@@ -53,7 +53,7 @@ fn main() -> io::Result<()> {
 
     let mut global_merchant = Merchant::new();
 
-    let info = Info::new(DEBUG, 0, map_viewheight + 1);
+    let info = Info::new(config::DEBUG, 0, map_viewheight + 1);
 
     map.draw_map()?;
     info.draw_info(&map, &player, &global_merchant)?;
@@ -68,8 +68,6 @@ fn main() -> io::Result<()> {
         MoveLeft(1)
     )?;
 
-    let mut num_seeds = 0;
-    let mut buy = false;
     loop {
         let old_player_pos: (u16, u16) = (player.x, player.y);
         //if event::poll(std::time::Duration::from_millis(500))? {
@@ -77,20 +75,12 @@ fn main() -> io::Result<()> {
             event::Event::Key(key_event) => match key_event.code {
                 event::KeyCode::Esc => break,
                 event::KeyCode::Enter => {
-                    let item = Item::Seed(num_seeds);
-                    if buy {
+                    for item in player.buying.clone() {
                         if !player.is_broke() && global_merchant.has_item(&item) {
-                            player.buys(item, SEED_PRICE);
-                            global_merchant.sells(item, SEED_PRICE);
-                        }
-                    } else {
-                        if !global_merchant.is_broke() && player.has_item(&item) {
-                            global_merchant.buys(item, SEED_PRICE);
-                            player.sells(item, SEED_PRICE);
+                            player.trade(item, &global_merchant);
                         }
                     }
-                    num_seeds = 0;
-                    buy = false;
+                    player.reset_buying();
                 }
                 event::KeyCode::F(5) => {
                     map = Map::new(map_width, map_height, left, top, game_width, map_viewheight);
@@ -118,20 +108,23 @@ fn main() -> io::Result<()> {
                             player.tools.push(Tools::Pickaxe);
                         }
                     }
-                    '+' => {
-                        num_seeds += 1;
-                    }
-                    's' => {
+                    '1' => {
                         if !player.is_on_merchant(&map) {
                             continue;
                         };
-                        buy = false; 
+                        player.buying[0] = player.buying[0].add(1);
                     }
-                    'b' => {
+                    '2' => {
                         if !player.is_on_merchant(&map) {
                             continue;
                         };
-                        buy = true; 
+                        player.buying[1] = player.buying[1].add(1);
+                    }
+                    '3' => {
+                        if !player.is_on_merchant(&map) {
+                            continue;
+                        };
+                        player.buying[0] = player.buying[0].add(-1);
                     }
                     _ => {}
                 },

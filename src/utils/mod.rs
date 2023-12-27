@@ -32,11 +32,25 @@ pub enum Tools {
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Item {
-    Rock(u32), 
-    Seed(u32),
+    Rock(i32), 
+    Seed(i32),
 }
 
  impl Item {
+    pub fn get_value(&self) -> i32 {
+        match self {
+            Item::Rock(x) => *x,
+            Item::Seed(x) => *x,
+        }
+    }
+
+    pub fn add(&mut self, num: i32) -> Self {
+        match self {
+           Item::Rock(ref x) => Item::Rock(x+num),
+           Item::Seed(ref x) => Item::Seed(x+num),
+        } 
+    }
+
      pub fn is_more(&self, other: Item) -> bool {
          match (*self, other) {
              (Item::Rock(x), Item::Rock(y)) => {

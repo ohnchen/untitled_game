@@ -2,8 +2,10 @@ use crossterm::event::KeyCode;
 use crossterm::{cursor::MoveTo, event, execute, style::Print};
 use std::io;
 
+use crate::config::*;
 use crate::utils::*;
 use crate::{map::Map, tiles::Tile};
+use crate::Merchant;
 
 pub struct Player {
     pub x: u16,
@@ -11,6 +13,7 @@ pub struct Player {
     pub tools: Vec<Tools>,
     pub items: Vec<Item>,
     pub gold: u32,
+    pub buying: Vec<Item>, 
 }
 
 impl Player {
@@ -25,11 +28,22 @@ impl Player {
                 Item::Seed(0),
             ],
             gold: 100,
+            buying: vec![
+                Item::Rock(0),
+                Item::Seed(0),
+            ],
         }
     }
 
     pub fn has_pickaxe(&self) -> bool {
         self.tools.contains(&Tools::Pickaxe) 
+    }
+
+    pub fn reset_buying(&mut self) {
+        self.buying = self.buying.iter().map(|e| match e {
+            Item::Rock(_) => Item::Rock(0),
+            Item::Seed(_) => Item::Seed(0),
+        }).collect();
     }
 
     pub fn move_direction(
@@ -158,21 +172,30 @@ impl Player {
         self.items.iter().any(|x| x.is_more(*item))
     }
 
-    pub fn buys(&mut self, item: Item, cost: u32) {
+    pub fn trade(&mut self, item: Item, _merchant: &Merchant) -> Option<i32> {
+        let mut cost: i32 = 0;
         self.items = self.items.iter().map(|ele| match (ele, item) {
-            (Item::Rock(x), Item::Rock(y)) => Item::Rock(x+y),
-            (Item::Seed(x), Item::Seed(y)) => Item::Seed(x+y),
+            (Item::Rock(x), Item::Rock(y)) => if x+y >= 0 {
+                cost += y * ROCK_PRICE as i32;
+                Item::Rock(x+y)
+            } else { *ele },
+            (Item::Seed(x), Item::Seed(y)) => if x+y >= 0 {
+                cost += y * SEED_PRICE as i32;
+                Item::Seed(x+y)
+            } else { *ele },
             _ => *ele,
         }).collect();
-        self.gold -= cost;
-    }
+        // merchant.items = merchant.items.iter().map(|ele| match (ele, item) {
+        //     (Item::Rock(x), Item::Rock(y)) => Item::Rock(x+y),
+        //     (Item::Seed(x), Item::Seed(y)) => Item::Seed(x+y),
+        //     _ => *ele,
+        // }).collect();
 
-    pub fn sells(&mut self, item: Item, cost: u32) {
-        self.items = self.items.iter().map(|ele| match (ele, item) {
-            (Item::Rock(x), Item::Rock(y)) => Item::Rock(x-y),
-            (Item::Seed(x), Item::Seed(y)) => Item::Seed(x-y),
-            _ => *ele,
-        }).collect();
-        self.gold += cost;
+        if self.gold as i32 - cost >= 0 {
+            self.gold = (self.gold as i32 - cost) as u32;
+            None
+        } else {
+            Some(cost - self.gold as i32)
+        }
     }
 }

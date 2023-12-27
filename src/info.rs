@@ -82,7 +82,7 @@ impl Info {
             .map(|(i, x)| (i+1, x))
             .collect::<Vec<(usize, &Item)>>();
 
-        draw_info!(left, top, "Buys: {:?}, Sells: {:?}", menu, merchant.items)?;
+        draw_info!(left, top, "Playergold: {}, Buys: {:?}, Sells: {:?}, Buying: {:?}", player.gold, menu, merchant.items, player.buying)?;
         Ok(())
     }
 }
