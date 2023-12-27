@@ -31,22 +31,22 @@ pub enum Tools {
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
-pub enum Items {
+pub enum Item {
     Rock(u32), 
     Seed(u32),
 }
 
- impl Items {
-     pub fn is_more(&self, other: Items) -> bool {
+ impl Item {
+     pub fn is_more(&self, other: Item) -> bool {
          match (*self, other) {
-             (Items::Rock(x), Items::Rock(y)) => {
+             (Item::Rock(x), Item::Rock(y)) => {
                  if x >= y {
                     return true;
                  } else {
                     return false;
                 }
              },
-             (Items::Seed(x), Items::Seed(y)) => {
+             (Item::Seed(x), Item::Seed(y)) => {
                 if x >= y {
                     return true;
                 } else {
@@ -58,23 +58,23 @@ pub enum Items {
      }
  }
 
-impl Sub for Items {
-    type Output = Items;
+impl Sub for Item {
+    type Output = Item;
 
     fn sub(self, rhs: Self) -> Self::Output {
         match (self, rhs) {
-            (Items::Rock(x), Items::Rock(y)) => {
+            (Item::Rock(x), Item::Rock(y)) => {
                 if x > y {
-                    Items::Rock(x-y)
+                    Item::Rock(x-y)
                 } else {
-                    Items::Rock(y-x)
+                    Item::Rock(y-x)
                 }
             },
-            (Items::Seed(x), Items::Seed(y)) => {
+            (Item::Seed(x), Item::Seed(y)) => {
                 if x > y {
-                    Items::Seed(x-y)
+                    Item::Seed(x-y)
                 } else {
-                    Items::Seed(y-x)
+                    Item::Seed(y-x)
                 }
             },
             _ => self,

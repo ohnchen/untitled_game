@@ -25,6 +25,7 @@ use crate::player::Player;
 use crate::utils::*;
 
 static SEED_PRICE: u32 = 1;
+static DEBUG: bool = false;
 
 fn main() -> io::Result<()> {
     enable_raw_mode()?;
@@ -49,38 +50,58 @@ fn main() -> io::Result<()> {
 
     let mut map = Map::new(map_width, map_height, left, top, game_width, map_viewheight);
     let mut player = Player::new(&map);
-    
+
     let mut global_merchant = Merchant::new();
 
-    let info = Info::new(true);
+    let info = Info::new(DEBUG, 0, map_viewheight + 1);
 
     map.draw_map()?;
-    info.draw_info(
-        &map,
-        &player,
-        &global_merchant,
-    )?;
+    info.draw_info(&map, &player, &global_merchant)?;
 
     execute!(
         io::stdout(),
-        MoveTo(map.spawnpoint.0 - map.viewleft, map.spawnpoint.1 - map.viewtop),
+        MoveTo(
+            map.spawnpoint.0 - map.viewleft,
+            map.spawnpoint.1 - map.viewtop
+        ),
         Print('X'),
         MoveLeft(1)
     )?;
 
+    let mut num_seeds = 0;
+    let mut buy = false;
     loop {
         let old_player_pos: (u16, u16) = (player.x, player.y);
         //if event::poll(std::time::Duration::from_millis(500))? {
         match event::read()? {
             event::Event::Key(key_event) => match key_event.code {
                 event::KeyCode::Esc => break,
+                event::KeyCode::Enter => {
+                    let item = Item::Seed(num_seeds);
+                    if buy {
+                        if !player.is_broke() && global_merchant.has_item(&item) {
+                            player.buys(item, SEED_PRICE);
+                            global_merchant.sells(item, SEED_PRICE);
+                        }
+                    } else {
+                        if !global_merchant.is_broke() && player.has_item(&item) {
+                            global_merchant.buys(item, SEED_PRICE);
+                            player.sells(item, SEED_PRICE);
+                        }
+                    }
+                    num_seeds = 0;
+                    buy = false;
+                }
                 event::KeyCode::F(5) => {
                     map = Map::new(map_width, map_height, left, top, game_width, map_viewheight);
                     player = Player::new(&map);
                     map.draw_map()?;
                     execute!(
                         io::stdout(),
-                        MoveTo(map.spawnpoint.0 - map.viewleft, map.spawnpoint.1 - map.viewtop),
+                        MoveTo(
+                            map.spawnpoint.0 - map.viewleft,
+                            map.spawnpoint.1 - map.viewtop
+                        ),
                         Print('X'),
                         MoveLeft(1)
                     )?;
@@ -97,19 +118,20 @@ fn main() -> io::Result<()> {
                             player.tools.push(Tools::Pickaxe);
                         }
                     }
-                    'b' => {
-                        if !player.is_on_merchant(&map) { continue }
-                        if !player.is_broke() && global_merchant.has_item(&Items::Seed(1)) {
-                            global_merchant.sells(Items::Seed(1), SEED_PRICE);
-                            player.buys(Items::Seed(1), SEED_PRICE);
-                        }
-                    },
+                    '+' => {
+                        num_seeds += 1;
+                    }
                     's' => {
-                        if !player.is_on_merchant(&map) { continue };
-                        if !global_merchant.is_broke() && player.has_item(&Items::Seed(1)){
-                            global_merchant.buys(Items::Seed(1), SEED_PRICE);
-                            player.sells(Items::Seed(1), SEED_PRICE);
-                        }
+                        if !player.is_on_merchant(&map) {
+                            continue;
+                        };
+                        buy = false; 
+                    }
+                    'b' => {
+                        if !player.is_on_merchant(&map) {
+                            continue;
+                        };
+                        buy = true; 
                     }
                     _ => {}
                 },
@@ -119,11 +141,7 @@ fn main() -> io::Result<()> {
         }
 
         map.draw_player(old_player_pos, &player)?;
-        info.draw_info(
-            &map,
-            &player,
-            &global_merchant,
-        )?;
+        info.draw_info(&map, &player, &global_merchant)?;
         stdout.flush()?;
     }
 

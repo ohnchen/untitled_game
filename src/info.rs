@@ -4,8 +4,9 @@ use crossterm::{
     style::Print,
     terminal::{Clear, ClearType},
 };
-use std::io::{self, Write};
+use std::{io::{self, Write}, task::Wake};
 
+use crate::Item;
 use crate::Map;
 use crate::Merchant;
 use crate::Player;
@@ -33,21 +34,18 @@ macro_rules! draw_info {
 
 pub struct Info {
     debug: bool,
+    left: u16,
+    top: u16,
 }
 
 impl Info {
-    pub fn new(debug: bool) -> Self {
-        Self { debug }
+    pub fn new(debug: bool, left: u16, top: u16) -> Self {
+        Self { debug, left, top }
     }
 
-    pub fn draw_info(
-        &self,
-        map: &Map,
-        player: &Player,
-        merchant: &Merchant,
-    ) -> io::Result<()> {
-        let left = 0;
-        let top = map.viewheight + 1;
+    pub fn draw_info(&self, map: &Map, player: &Player, merchant: &Merchant) -> io::Result<()> {
+        let left = self.left;
+        let top = self.top;
         if self.debug {
             draw_info!(
                 left,
@@ -66,10 +64,25 @@ impl Info {
             return Ok(());
         }
         if player.is_on_merchant(map) {
-            draw_info!(left, top, "Merchant has no items left!")?;
+            self.draw_trademenu(player, merchant)?;
             return Ok(());
         }
         clear_info!(left, top)?;
+        Ok(())
+    }
+
+    pub fn draw_trademenu(&self, player: &Player, merchant: &Merchant) -> io::Result<()> {
+        let left = self.left;
+        let top = self.top;
+
+        let menu = player
+            .items
+            .iter()
+            .enumerate()
+            .map(|(i, x)| (i+1, x))
+            .collect::<Vec<(usize, &Item)>>();
+
+        draw_info!(left, top, "Buys: {:?}, Sells: {:?}", menu, merchant.items)?;
         Ok(())
     }
 }

@@ -9,7 +9,7 @@ pub struct Player {
     pub x: u16,
     pub y: u16,
     pub tools: Vec<Tools>,
-    pub items: Vec<Items>,
+    pub items: Vec<Item>,
     pub gold: u32,
 }
 
@@ -21,8 +21,8 @@ impl Player {
             y,
             tools: vec![],
             items: vec![
-                Items::Rock(0),
-                Items::Seed(0),
+                Item::Rock(0),
+                Item::Seed(0),
             ],
             gold: 100,
         }
@@ -117,8 +117,8 @@ impl Player {
                 KeyCode::Char(' ') => {
                     map.set_tile(x, y, Tile::Mine);
                     self.items = self.items.iter().map(|r| {match r {
-                        Items::Rock(num) => Items::Rock(num + 1),
-                        Items::Seed(i) => Items::Seed(*i),
+                        Item::Rock(num) => Item::Rock(num + 1),
+                        Item::Seed(i) => Item::Seed(*i),
                     }}).collect();
                     mined = true;
                 }
@@ -154,23 +154,23 @@ impl Player {
         self.gold == 0
     }
 
-    pub fn has_item(&mut self, item: &Items) -> bool {
+    pub fn has_item(&mut self, item: &Item) -> bool {
         self.items.iter().any(|x| x.is_more(*item))
     }
 
-    pub fn buys(&mut self, item: Items, cost: u32) {
+    pub fn buys(&mut self, item: Item, cost: u32) {
         self.items = self.items.iter().map(|ele| match (ele, item) {
-            (Items::Rock(x), Items::Rock(y)) => Items::Rock(x+y),
-            (Items::Seed(x), Items::Seed(y)) => Items::Seed(x+y),
+            (Item::Rock(x), Item::Rock(y)) => Item::Rock(x+y),
+            (Item::Seed(x), Item::Seed(y)) => Item::Seed(x+y),
             _ => *ele,
         }).collect();
         self.gold -= cost;
     }
 
-    pub fn sells(&mut self, item: Items, cost: u32) {
+    pub fn sells(&mut self, item: Item, cost: u32) {
         self.items = self.items.iter().map(|ele| match (ele, item) {
-            (Items::Rock(x), Items::Rock(y)) => Items::Rock(x-y),
-            (Items::Seed(x), Items::Seed(y)) => Items::Seed(x-y),
+            (Item::Rock(x), Item::Rock(y)) => Item::Rock(x-y),
+            (Item::Seed(x), Item::Seed(y)) => Item::Seed(x-y),
             _ => *ele,
         }).collect();
         self.gold += cost;
