@@ -37,6 +37,13 @@ pub enum Item {
 }
 
  impl Item {
+    pub fn get_name(&self) -> String {
+        match self {
+            Item::Rock(_) => "Rock".to_string(),
+            Item::Seed(_) => "Seed".to_string(),
+        }
+    }
+
     pub fn get_value(&self) -> i32 {
         match self {
             Item::Rock(x) => *x,

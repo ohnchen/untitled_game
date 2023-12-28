@@ -76,8 +76,11 @@ fn main() -> io::Result<()> {
                 event::KeyCode::Esc => break,
                 event::KeyCode::Enter => {
                     for item in player.buying.clone() {
-                        if !player.is_broke() && global_merchant.has_item(&item) {
-                            player.trade(item, &global_merchant);
+                        if player.has_money(global_merchant.get_price(&item)) && global_merchant.has_item(&item) {
+                            if player.trade(item, &global_merchant).is_none() {
+                                // some warning that trade did not happen because of the lack of
+                                // money OR BETTER prevent user from overbuying in the first place
+                            }
                         }
                     }
                     player.reset_buying();

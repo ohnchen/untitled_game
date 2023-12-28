@@ -71,18 +71,16 @@ impl Info {
         Ok(())
     }
 
-    pub fn draw_trademenu(&self, player: &Player, merchant: &Merchant) -> io::Result<()> {
+    pub fn draw_trademenu(&self, player: &Player, _merchant: &Merchant) -> io::Result<()> {
         let left = self.left;
-        let top = self.top;
+        let mut top = self.top;
 
-        let menu = player
-            .items
-            .iter()
-            .enumerate()
-            .map(|(i, x)| (i+1, x))
-            .collect::<Vec<(usize, &Item)>>();
-
-        draw_info!(left, top, "Playergold: {}, Buys: {:?}, Sells: {:?}, Buying: {:?}", player.gold, menu, merchant.items, player.buying)?;
+        draw_info!(left, top, "Gold: {}", player.gold)?;
+        for (i,item) in player.items.iter().enumerate() {
+            let buying = player.buying[i];
+            top += 1;
+            draw_info!(left, top, "{}:{:?} {:?}({:?})", i+1, item.get_name(), item.get_value(), buying.get_value())?;
+        }
         Ok(())
     }
 }
