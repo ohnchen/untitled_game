@@ -26,8 +26,10 @@ pub enum Direction {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub enum Tools {
+pub enum Tool {
     Pickaxe,
+    Hoe,
+    FishingRod,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]

@@ -19,13 +19,7 @@ mod player;
 mod tiles;
 mod utils;
 
-use crate::config::*;
-use crate::info::Info;
-use crate::map::Map;
-use crate::merchant::Merchant;
-use crate::player::Player;
-use crate::utils::*;
-
+use crate::{config::*, info::Info, map::Map, merchant::Merchant, player::Player, utils::*};
 
 fn main() -> io::Result<()> {
     enable_raw_mode()?;
@@ -76,7 +70,9 @@ fn main() -> io::Result<()> {
                 event::KeyCode::Esc => break,
                 event::KeyCode::Enter => {
                     for item in player.buying.clone() {
-                        if player.has_money(global_merchant.get_price(&item)) && global_merchant.has_item(&item) {
+                        if player.has_money(global_merchant.get_price(&item))
+                            && global_merchant.has_item(&item)
+                        {
                             if player.trade(item, &global_merchant).is_none() {
                                 // some warning that trade did not happen because of the lack of
                                 // money OR BETTER prevent user from overbuying in the first place
@@ -108,7 +104,7 @@ fn main() -> io::Result<()> {
                         if player.has_pickaxe() {
                             player.tools.clear();
                         } else {
-                            player.tools.push(Tools::Pickaxe);
+                            player.tools.push(Tool::Pickaxe);
                         }
                     }
                     '1' => {
@@ -123,11 +119,17 @@ fn main() -> io::Result<()> {
                         };
                         player.buying[1] = player.buying[1].add(1);
                     }
-                    '3' => {
+                    '!' => {
                         if !player.is_on_merchant(&map) {
                             continue;
                         };
                         player.buying[0] = player.buying[0].add(-1);
+                    }
+                    '"' => {
+                        if !player.is_on_merchant(&map) {
+                            continue;
+                        };
+                        player.buying[1] = player.buying[1].add(-1);
                     }
                     _ => {}
                 },
