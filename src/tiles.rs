@@ -29,7 +29,7 @@ impl Tile {
             Tile::Water => return "w".with(Color::Blue),
             Tile::Merchant => return "M".with(Color::DarkYellow),
             Tile::Rock => return "r".with(Color::Grey),
-            Tile::Mine => return "o".with(Color::DarkGrey), 
+            Tile::Mine => return "o".with(Color::White), 
             _ => return "e".with(Color::DarkGrey),
         }
     }

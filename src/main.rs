@@ -39,10 +39,8 @@ fn main() -> io::Result<()> {
 
     let left = 220;
     let top = 220;
-    let map_width = 500;
-    let map_height = 500;
 
-    let mut map = Map::new(map_width, map_height, left, top, game_width, map_viewheight);
+    let mut map = Map::new(MAP_WIDTH, MAP_HEIGHT, left, top, game_width, map_viewheight);
     let mut player = Player::new(&map);
 
     let mut global_merchant = Merchant::new();
@@ -73,16 +71,13 @@ fn main() -> io::Result<()> {
                         if player.has_money(global_merchant.get_price(&item))
                             && global_merchant.has_item(&item)
                         {
-                            if player.trade(item, &global_merchant).is_none() {
-                                // some warning that trade did not happen because of the lack of
-                                // money OR BETTER prevent user from overbuying in the first place
-                            }
+                            player.trade(item, &global_merchant);
                         }
                     }
                     player.reset_buying();
                 }
                 event::KeyCode::F(5) => {
-                    map = Map::new(map_width, map_height, left, top, game_width, map_viewheight);
+                    map = Map::new(MAP_WIDTH, MAP_HEIGHT, left, top, game_width, map_viewheight);
                     player = Player::new(&map);
                     map.draw_map()?;
                     execute!(
@@ -100,36 +95,25 @@ fn main() -> io::Result<()> {
                     'l' => player.move_direction(&mut map, Direction::Right, 1)?,
                     'j' => player.move_direction(&mut map, Direction::Down, 1)?,
                     'k' => player.move_direction(&mut map, Direction::Up, 1)?,
-                    'p' => {
-                        if player.has_pickaxe() {
-                            player.tools.clear();
-                        } else {
-                            player.tools.push(Tool::Pickaxe);
-                        }
-                    }
                     '1' => {
-                        if !player.is_on_merchant(&map) {
-                            continue;
+                        if player.is_on_merchant(&map) {
+                            player.buying[0] = player.buying[0].add(1);
                         };
-                        player.buying[0] = player.buying[0].add(1);
                     }
                     '2' => {
-                        if !player.is_on_merchant(&map) {
-                            continue;
+                        if player.is_on_merchant(&map) {
+                            player.buying[1] = player.buying[1].add(1);
                         };
-                        player.buying[1] = player.buying[1].add(1);
                     }
                     '!' => {
-                        if !player.is_on_merchant(&map) {
-                            continue;
+                        if player.is_on_merchant(&map) {
+                            player.buying[0] = player.buying[0].add(-1);
                         };
-                        player.buying[0] = player.buying[0].add(-1);
                     }
                     '"' => {
-                        if !player.is_on_merchant(&map) {
-                            continue;
+                        if player.is_on_merchant(&map) {
+                            player.buying[1] = player.buying[1].add(-1);
                         };
-                        player.buying[1] = player.buying[1].add(-1);
                     }
                     _ => {}
                 },
