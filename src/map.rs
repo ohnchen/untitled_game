@@ -105,7 +105,7 @@ impl Map {
     fn generate_map(width: usize, height: usize) -> Vec<Vec<Tile>> {
         let mut tiles: Vec<Vec<Tile>> = vec![vec![Tile::Empty; width]; height];
         let perl = PerlinNoise::new();
-        let scale: f64 = width as f64/32.7193;
+        let scale: f64 = width as f64/42.7193;
 
         for x in 0..width {
             for y in 0..height {
