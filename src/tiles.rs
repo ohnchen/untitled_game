@@ -13,7 +13,7 @@ pub enum Tile {
 
     // Soil,
     // WateredSoil,
-    // Crop,
+    Crop,
     
     Empty,
 }
@@ -29,7 +29,8 @@ impl Tile {
             Tile::Water => return "w".with(Color::Blue),
             Tile::Merchant => return "M".with(Color::DarkYellow),
             Tile::Rock => return "r".with(Color::Grey),
-            Tile::Mine => return "o".with(Color::White), 
+            Tile::Mine => return "#".with(Color::White), 
+            Tile::Crop => return "v".with(Color::Yellow), 
             _ => return "e".with(Color::DarkGrey),
         }
     }

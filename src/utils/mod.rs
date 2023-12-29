@@ -1,20 +1,20 @@
 use std::ops::Sub;
 
-pub fn saturated_sub(op1: u16, op2: u16, min: u16) -> u16 {
-    let diff: i32 = op1 as i32 - op2 as i32;
-    if diff < min.into() {
+pub fn saturated_sub(op1: usize, op2: usize, min: usize) -> usize {
+    let diff: isize = op1 as isize - op2 as isize;
+    if diff < min as isize {
         return min;
     } else {
-        return diff as u16;
+        return diff as usize;
     }
 }
 
-pub fn saturated_add(op1: u16, op2: u16, max: u16) -> u16 {
-    let sum: u16 = op1 + op2;
+pub fn saturated_add(op1: usize, op2: usize, max: usize) -> usize {
+    let sum: usize = op1 + op2;
     if sum >= max {
         return max - 1;
     } else {
-        return sum as u16;
+        return sum as usize;
     }
 }
 

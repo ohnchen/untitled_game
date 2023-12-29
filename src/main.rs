@@ -40,7 +40,7 @@ fn main() -> io::Result<()> {
     let left = 220;
     let top = 220;
 
-    let mut map = Map::new(MAP_WIDTH, MAP_HEIGHT, left, top, game_width, map_viewheight);
+    let mut map = Map::new(MAP_WIDTH, MAP_HEIGHT, left, top, game_width as usize, map_viewheight as usize);
     let mut player = Player::new(&map);
 
     let mut global_merchant = Merchant::new();
@@ -53,15 +53,15 @@ fn main() -> io::Result<()> {
     execute!(
         io::stdout(),
         MoveTo(
-            map.spawnpoint.0 - map.viewleft,
-            map.spawnpoint.1 - map.viewtop
+            (map.spawnpoint.0 - map.viewleft) as u16,
+            (map.spawnpoint.1 - map.viewtop) as u16
         ),
         Print('X'),
         MoveLeft(1)
     )?;
 
     loop {
-        let old_player_pos: (u16, u16) = (player.x, player.y);
+        let old_player_pos = (player.x, player.y);
         //if event::poll(std::time::Duration::from_millis(500))? {
         match event::read()? {
             event::Event::Key(key_event) => match key_event.code {
@@ -77,14 +77,14 @@ fn main() -> io::Result<()> {
                     player.reset_buying();
                 }
                 event::KeyCode::F(5) => {
-                    map = Map::new(MAP_WIDTH, MAP_HEIGHT, left, top, game_width, map_viewheight);
+                    map = Map::new(MAP_WIDTH, MAP_HEIGHT, left, top, game_width as usize, map_viewheight as usize);
                     player = Player::new(&map);
                     map.draw_map()?;
                     execute!(
                         io::stdout(),
                         MoveTo(
-                            map.spawnpoint.0 - map.viewleft,
-                            map.spawnpoint.1 - map.viewtop
+                            (map.spawnpoint.0 - map.viewleft) as u16,
+                            (map.spawnpoint.1 - map.viewtop) as u16
                         ),
                         Print('X'),
                         MoveLeft(1)
@@ -95,6 +95,7 @@ fn main() -> io::Result<()> {
                     'l' => player.move_direction(&mut map, Direction::Right, 1)?,
                     'j' => player.move_direction(&mut map, Direction::Down, 1)?,
                     'k' => player.move_direction(&mut map, Direction::Up, 1)?,
+                    'p' => player.plant_seeds(&mut map, (player.x, player.y)),
                     '1' => {
                         if player.is_on_merchant(&map) {
                             player.buying[0] = player.buying[0].add(1);

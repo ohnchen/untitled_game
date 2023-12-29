@@ -1,13 +1,14 @@
 pub mod player_movement;
 pub mod player_trading;
+pub mod player_farming;
 
 use crate::Map;
 use crate::Item;
 use crate::Tool;
 
 pub struct Player {
-    pub x: u16,
-    pub y: u16,
+    pub x: usize,
+    pub y: usize,
     pub tools: Vec<Tool>,
     pub items: Vec<Item>,
     pub gold: u32,
@@ -16,7 +17,7 @@ pub struct Player {
 
 impl Player {
     pub fn new(map: &Map) -> Self {
-        let (x, y): (u16, u16) = map.spawnpoint;
+        let (x, y) = map.spawnpoint;
         Self {
             x,
             y,

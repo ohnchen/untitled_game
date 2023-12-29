@@ -79,7 +79,7 @@ impl Info {
         for (i,item) in player.items.iter().enumerate() {
             let buying = player.buying[i];
             top += 1;
-            draw_info!(left, top, "{}:{:?} {:?}({:?})", i+1, item.get_name(), item.get_value(), buying.get_value())?;
+            draw_info!(left, top, "{}:{} {:?}({:?})", i+1, item.get_name(), item.get_value(), buying.get_value())?;
         }
         Ok(())
     }

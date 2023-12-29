@@ -1,7 +1,6 @@
 use crossterm::event::KeyCode;
 use crossterm::{cursor::MoveTo, event, execute, style::Print};
 use std::io;
-use std::ops::BitOr;
 
 use crate::config::*;
 use crate::utils::*;
@@ -14,7 +13,7 @@ impl Player {
         &mut self,
         map: &mut Map,
         direction: Direction,
-        length: u16,
+        length: usize,
     ) -> io::Result<()> {
         match direction {
             Direction::Left => {
@@ -105,7 +104,7 @@ impl Player {
         return false;
     }
 
-    fn mine(&mut self, map: &mut Map, x: u16, y: u16) -> io::Result<bool> {
+    fn mine(&mut self, map: &mut Map, x: usize, y: usize) -> io::Result<bool> {
         let mut mined = false;
         map.mine_option(x, y, true)?;
         match event::read()? {
