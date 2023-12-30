@@ -37,8 +37,9 @@ fn main() -> io::Result<()> {
     let info_viewheight: u16 = game_height / 6;
     let map_viewheight: u16 = game_height - info_viewheight;
 
-    let left = 220;
-    let top = 220;
+    
+    let left = MAP_WIDTH/2; 
+    let top = MAP_HEIGHT/2;
 
     let mut map = Map::new(MAP_WIDTH, MAP_HEIGHT, left, top, game_width as usize, map_viewheight as usize);
     let mut player = Player::new(&map);
@@ -95,7 +96,7 @@ fn main() -> io::Result<()> {
                     'l' => player.move_direction(&mut map, Direction::Right, 1)?,
                     'j' => player.move_direction(&mut map, Direction::Down, 1)?,
                     'k' => player.move_direction(&mut map, Direction::Up, 1)?,
-                    'p' => player.plant_seeds(&mut map, (player.x, player.y)),
+                    ' ' => player.plant_seeds(&mut map, (player.x, player.y)),
                     '1' => {
                         if player.is_on_merchant(&map) {
                             player.buying[0] = player.buying[0].add(1);

@@ -4,7 +4,10 @@ use crossterm::{
     style::Print,
     terminal::{Clear, ClearType},
 };
-use std::{io::{self, Write}, task::Wake};
+use std::{
+    io::{self, Write},
+    task::Wake,
+};
 
 use crate::Item;
 use crate::Map;
@@ -76,10 +79,25 @@ impl Info {
         let mut top = self.top;
 
         draw_info!(left, top, "Gold: {}", player.gold)?;
-        for (i,item) in player.items.iter().enumerate() {
+        for (i, item) in player.items.iter().enumerate() {
             let buying = player.buying[i];
             top += 1;
-            draw_info!(left, top, "{}:{} {:?}({:?})", i+1, item.get_name(), item.get_value(), buying.get_value())?;
+            draw_info!(
+                left,
+                top,
+                "{}:{} {:?}({}{:?})",
+                i + 1,
+                item.get_name(),
+                item.get_value(),
+                {
+                    if buying.get_value() > 0 {
+                        '+'
+                    } else {
+                        '​' 
+                    } 
+                },
+                buying.get_value()
+            )?;
         }
         Ok(())
     }
