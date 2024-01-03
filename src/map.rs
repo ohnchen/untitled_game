@@ -53,6 +53,7 @@ impl Map {
     }
 
     pub fn is_near_water(&self, x: usize, y: usize) -> bool {
+        // saturated
         for i in x-2..x+2 {
             for j in y-2..y+2 {
                 if self.get_tile(i, j) == Tile::Water {

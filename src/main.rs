@@ -96,7 +96,7 @@ fn main() -> io::Result<()> {
                     'l' => player.move_direction(&mut map, Direction::Right, 1)?,
                     'j' => player.move_direction(&mut map, Direction::Down, 1)?,
                     'k' => player.move_direction(&mut map, Direction::Up, 1)?,
-                    ' ' => player.plant_seeds(&mut map, (player.x, player.y)),
+                    ' ' => player.plant_seeds(&mut map),
                     '1' => {
                         if player.is_on_merchant(&map) {
                             player.buying[0] = player.buying[0].add(1);
