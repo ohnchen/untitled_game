@@ -79,24 +79,24 @@ impl Info {
         let mut top = self.top;
 
         draw_info!(left, top, "Gold: {}", player.gold)?;
-        for (i, item) in player.items.iter().enumerate() {
-            let buying = player.buying[i];
+        for (i, (k, v)) in player.items.iter().enumerate() {
+            let b_value = player.buying[k];
             top += 1;
             draw_info!(
                 left,
                 top,
                 "{}:{} {:?}({}{:?})",
                 i + 1,
-                item.get_name(),
-                item.get_value(),
+                k.get_name(),
+                v,
                 {
-                    if buying.get_value() > 0 {
+                    if b_value > 0 {
                         '+'
                     } else {
                         '​' 
                     } 
                 },
-                buying.get_value()
+                b_value,
             )?;
         }
         Ok(())

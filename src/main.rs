@@ -68,11 +68,12 @@ fn main() -> io::Result<()> {
             event::Event::Key(key_event) => match key_event.code {
                 event::KeyCode::Esc => break,
                 event::KeyCode::Enter => {
-                    for item in player.buying.clone() {
-                        if player.has_money(global_merchant.get_price(&item))
-                            && global_merchant.has_item(&item)
+                    for (k, v) in &player.buying.clone() {
+                        if player.has_money(global_merchant.get_price(k, *v))
+                            && (global_merchant.has_item(&k, *v) && *v >= 0)
+                            || (player.has_item(&k, *v) && *v <= 0)
                         {
-                            player.trade(item, &global_merchant);
+                            player.trade(&k, *v, &mut global_merchant);
                         }
                     }
                     player.reset_buying();
@@ -99,22 +100,22 @@ fn main() -> io::Result<()> {
                     ' ' => player.plant_seeds(&mut map),
                     '1' => {
                         if player.is_on_merchant(&map) {
-                            player.buying[0] = player.buying[0].add(1);
+                            player.buying.get_mut(&Item::Rock).map(|e| {*e += 1});
                         };
                     }
                     '2' => {
                         if player.is_on_merchant(&map) {
-                            player.buying[1] = player.buying[1].add(1);
+                            player.buying.get_mut(&Item::Seed).map(|e| {*e += 1});
                         };
                     }
                     '!' => {
                         if player.is_on_merchant(&map) {
-                            player.buying[0] = player.buying[0].add(-1);
+                            player.buying.get_mut(&Item::Rock).map(|e| {*e -= 1});
                         };
                     }
                     '"' => {
                         if player.is_on_merchant(&map) {
-                            player.buying[1] = player.buying[1].add(-1);
+                            player.buying.get_mut(&Item::Seed).map(|e| {*e -= 1});
                         };
                     }
                     _ => {}

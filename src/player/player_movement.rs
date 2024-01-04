@@ -111,14 +111,7 @@ impl Player {
             event::Event::Key(key_event) => match key_event.code {
                 KeyCode::Char(' ') => {
                     map.set_tile(x, y, Tile::Mine);
-                    self.items = self
-                        .items
-                        .iter()
-                        .map(|r| match r {
-                            Item::Rock(num) => Item::Rock(num + 1),
-                            Item::Seed(i) => Item::Seed(*i),
-                        })
-                        .collect();
+                    self.items.get_mut(&Item::Rock).map(|e| {*e += 1});
                     mined = true;
                 }
                 _ => {}
