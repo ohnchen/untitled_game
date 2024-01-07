@@ -1,4 +1,4 @@
-pub static DEBUG: bool = false;
+pub static DEBUG: bool = true;
 pub static MAP_WIDTH: usize = 500;
 pub static MAP_HEIGHT: usize = 500;
 
