@@ -12,40 +12,68 @@ use crate::Map;
 use crate::Merchant;
 use crate::Player;
 
-pub struct Menu();
+pub struct Menu {
+    game_width: u16,
+    game_height: u16,
+}
+
 impl Menu {
-    pub fn draw_menu(&self, game_width: u16, game_height: u16) -> io::Result<()> {
-        Self::draw_menu_box_top(game_width - 2, game_height-5)?;
-        Self::draw_menu_box_bottom(game_width - 2, game_height-2)?;
-        Self::clear_between(1, game_height-5, game_height-2, game_width-2)?;
-        Ok(())
-    }
-
-    pub fn draw_trade_menu(&self, game_width: u16, game_height: u16) -> io::Result<()> {
-        Ok(())
-    }
-
-    fn draw_menu_box_top(width: u16, bottom: u16) -> io::Result<()> {
-        queue!(io::stdout(), MoveTo(1, bottom), Print(TLCORNER))?;
-        for _ in 0..width - 2 {
-            queue!(io::stdout(), Print(HBORDER))?;
+    pub fn new(game_width: u16, game_height: u16) -> Self {
+        Self {
+            game_width,
+            game_height,
         }
-        queue!(io::stdout(), Print(TRCORNER))?;
+    }
+
+    pub fn draw_menu(&self) -> io::Result<()> {
+        Self::draw_box_top(1, self.game_height - 5, self.game_width - 2)?;
+        Self::draw_box_bottom(1, self.game_height - 2, self.game_width - 2)?;
+        Self::clear_between(
+            1,
+            self.game_height - 5,
+            self.game_height - 2,
+            self.game_width - 2,
+        )?;
         Ok(())
     }
 
-    fn draw_menu_box_bottom(width: u16, bottom: u16) -> io::Result<()> {
-        queue!(io::stdout(), MoveTo(1, bottom), Print(BLCORNER))?;
-        for _ in 0..width - 2 {
-            queue!(io::stdout(), Print(HBORDER))?;
-        }
-        queue!(io::stdout(), Print(BRCORNER))?;
+    pub fn draw_trade_menu(&self, width: u16, height: u16) -> io::Result<()> {
+        Self::draw_box_top(1, self.game_height - 6 - height, width)?;
+        Self::draw_box_bottom(1, self.game_height - 6, width)?;
+        Self::clear_between(
+            1,
+            self.game_height - 6 - height,
+            self.game_height - 6,
+            width,
+        )?;
+        Ok(())
+    }
+
+    fn draw_box_top(left: u16, row: u16, width: u16) -> io::Result<()> {
+        queue!(
+            io::stdout(),
+            MoveTo(left, row),
+            Print(TLCORNER),
+            Print(HBORDER.repeat(width as usize - 2)),
+            Print(TRCORNER)
+        )?;
+        Ok(())
+    }
+
+    fn draw_box_bottom(left: u16, row: u16, width: u16) -> io::Result<()> {
+        queue!(
+            io::stdout(),
+            MoveTo(left, row),
+            Print(BLCORNER),
+            Print(HBORDER.repeat(width as usize - 2)),
+            Print(BRCORNER)
+        )?;
         Ok(())
     }
 
     fn clear_between(left: u16, top: u16, bottom: u16, width: u16) -> io::Result<()> {
-        for i in 1..bottom-top {
-            queue!(io::stdout(), MoveTo(left, top+i))?;
+        for i in 1..bottom - top {
+            queue!(io::stdout(), MoveTo(left, top + i))?;
             queue!(io::stdout(), Print(" ".repeat(width.into())))?;
         }
         Ok(())

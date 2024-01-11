@@ -44,12 +44,12 @@ fn main() -> io::Result<()> {
     let mut player = Player::new(&map);
 
     let mut global_merchant = Merchant::new();
-    let menu = Menu();
+    let menu = Menu::new(game_width, game_height);
 
     //let info = Info::new(config::DEBUG, 0, map_viewheight + 1);
 
     map.draw_map()?;
-    menu.draw_menu(game_width, game_height)?;
+    menu.draw_menu()?;
     //info.draw_info(&map, &player, &global_merchant)?;
 
     execute!(
@@ -127,7 +127,10 @@ fn main() -> io::Result<()> {
         }
 
         map.draw_player(old_player_pos, &player)?;
-        menu.draw_menu(game_width, game_height)?;
+        menu.draw_menu()?;
+        if player.is_on_merchant(&map) {
+            menu.draw_trade_menu(20, 5)?;
+        }
         //info.draw_info(&map, &player, &global_merchant)?;
         stdout.flush()?;
     }

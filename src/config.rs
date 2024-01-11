@@ -9,10 +9,10 @@ pub static ROCK_PRICE: u32 = 1;
 
 
 // Bordercharacters for the menu
-pub static HBORDER: char = '─';
-pub static VBORDER: char = '│';
+pub static HBORDER: &str = "─";
+pub static VBORDER: &str = "│";
 
-pub static TLCORNER: char = '╭';
-pub static TRCORNER: char = '╮';
-pub static BLCORNER: char = '╰';
-pub static BRCORNER: char = '╯';
+pub static TLCORNER: &str = "╭";
+pub static TRCORNER: &str = "╮";
+pub static BLCORNER: &str = "╰";
+pub static BRCORNER: &str = "╯";
