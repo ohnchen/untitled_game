@@ -49,6 +49,7 @@ impl Info {
     pub fn draw_info(&self, map: &Map, player: &Player, merchant: &Merchant) -> io::Result<()> {
         let left = self.left;
         let top = self.top;
+        clear_info!(left, top)?;
         if self.debug {
             draw_info!(
                 left,
@@ -64,19 +65,17 @@ impl Info {
                 merchant.gold,
                 merchant.items,
             )?;
-            return Ok(());
         }
         if player.is_on_merchant(map) {
             self.draw_trademenu(player, merchant)?;
             return Ok(());
         }
-        clear_info!(left, top)?;
         Ok(())
     }
 
     pub fn draw_trademenu(&self, player: &Player, _merchant: &Merchant) -> io::Result<()> {
         let left = self.left;
-        let mut top = self.top;
+        let mut top = self.top+1;
 
         draw_info!(left, top, "Gold: {}", player.gold)?;
         for (i, (k, v)) in player.items.iter().enumerate() {

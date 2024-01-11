@@ -86,7 +86,7 @@ impl Map {
             }
         }
 
-        self.draw_map_border()?;
+        //self.draw_map_border()?;
         Ok(())
     }
 

@@ -14,12 +14,13 @@ use std::io::{self, Write};
 mod config;
 mod info;
 mod map;
+mod menu;
 mod merchant;
 mod player;
 mod tiles;
 mod utils;
 
-use crate::{config::*, info::Info, map::Map, merchant::Merchant, player::Player, utils::*};
+use crate::{config::*, info::Info, map::Map, menu::Menu, merchant::Merchant, player::Player, utils::*};
 
 fn main() -> io::Result<()> {
     enable_raw_mode()?;
@@ -34,22 +35,22 @@ fn main() -> io::Result<()> {
 
     let game_width: u16 = terminal::size()?.0;
     let game_height: u16 = terminal::size()?.1;
-    let info_viewheight: u16 = game_height / 6;
-    let map_viewheight: u16 = game_height - info_viewheight;
 
     
     let left = MAP_WIDTH/2; 
     let top = MAP_HEIGHT/2;
 
-    let mut map = Map::new(MAP_WIDTH, MAP_HEIGHT, left, top, game_width as usize, map_viewheight as usize);
+    let mut map = Map::new(MAP_WIDTH, MAP_HEIGHT, left, top, game_width as usize, game_height as usize);
     let mut player = Player::new(&map);
 
     let mut global_merchant = Merchant::new();
+    let menu = Menu();
 
-    let info = Info::new(config::DEBUG, 0, map_viewheight + 1);
+    //let info = Info::new(config::DEBUG, 0, map_viewheight + 1);
 
     map.draw_map()?;
-    info.draw_info(&map, &player, &global_merchant)?;
+    menu.draw_menu(game_width, game_height)?;
+    //info.draw_info(&map, &player, &global_merchant)?;
 
     execute!(
         io::stdout(),
@@ -79,7 +80,7 @@ fn main() -> io::Result<()> {
                     player.reset_buying();
                 }
                 event::KeyCode::F(5) => {
-                    map = Map::new(MAP_WIDTH, MAP_HEIGHT, left, top, game_width as usize, map_viewheight as usize);
+                    map = Map::new(MAP_WIDTH, MAP_HEIGHT, left, top, game_width as usize, game_height as usize);
                     player = Player::new(&map);
                     map.draw_map()?;
                     execute!(
@@ -126,7 +127,8 @@ fn main() -> io::Result<()> {
         }
 
         map.draw_player(old_player_pos, &player)?;
-        info.draw_info(&map, &player, &global_merchant)?;
+        menu.draw_menu(game_width, game_height)?;
+        //info.draw_info(&map, &player, &global_merchant)?;
         stdout.flush()?;
     }
 

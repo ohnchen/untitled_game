@@ -65,7 +65,7 @@ impl Player {
                 while self.can_go_dir(&map, Direction::Up) && self.y > new_y {
                     self.y -= 1;
                     if self.y < map.viewtop {
-                        map.viewtop = saturated_sub(map.viewtop, map.viewheight, 0);
+                        map.viewtop = saturated_sub(map.viewtop, map.viewheight - 5, 0);
                         map.draw_map()?;
                     }
                 }
@@ -82,9 +82,9 @@ impl Player {
                 };
                 while self.can_go_dir(&map, Direction::Down) && self.y < new_y {
                     self.y += 1;
-                    if self.y >= map.viewtop + map.viewheight {
+                    if self.y >= map.viewtop + map.viewheight - 5 {
                         map.viewtop =
-                            saturated_add(map.viewtop, map.viewheight, map.height - map.viewheight);
+                            saturated_add(map.viewtop, map.viewheight - 5, map.height - map.viewheight);
                         map.draw_map()?;
                     }
                 }
