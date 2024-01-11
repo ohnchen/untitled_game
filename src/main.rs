@@ -12,7 +12,6 @@ use crossterm::{
 use std::io::{self, Write};
 
 mod config;
-mod info;
 mod map;
 mod menu;
 mod merchant;
@@ -21,7 +20,7 @@ mod tiles;
 mod utils;
 
 use crate::{
-    config::*, info::Info, map::Map, menu::Menu, merchant::Merchant, player::Player, utils::*,
+    config::*, map::Map, menu::Menu, merchant::Merchant, player::Player, utils::*,
 };
 
 fn main() -> io::Result<()> {
@@ -54,11 +53,11 @@ fn main() -> io::Result<()> {
     let mut global_merchant = Merchant::new();
     let menu = Menu::new(game_width, game_height);
 
-    //let info = Info::new(config::DEBUG, 0, map_viewheight + 1);
-
     map.draw_map()?;
     menu.draw_menu()?;
-    //info.draw_info(&map, &player, &global_merchant)?;
+    if DEBUG {
+        menu.draw_debug(&map, &player, &global_merchant)?;
+    }
 
     execute!(
         io::stdout(),
@@ -150,7 +149,10 @@ fn main() -> io::Result<()> {
             )?;
         }
         if player.is_on_merchant(&map) {
-            menu.draw_trade_menu()?;
+            menu.draw_trade_menu(&player)?;
+        }
+        if DEBUG {
+            menu.draw_debug(&map, &player, &global_merchant)?;
         }
 
         map.draw_player(old_player_pos, &player)?;
