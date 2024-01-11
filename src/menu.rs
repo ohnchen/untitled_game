@@ -13,17 +13,20 @@ use crate::Merchant;
 use crate::Player;
 
 pub struct Menu();
-
 impl Menu {
     pub fn draw_menu(&self, game_width: u16, game_height: u16) -> io::Result<()> {
-        Self::draw_menu_box_top(game_width - 2, game_height)?;
-        Self::draw_menu_box_bottom(game_width - 2, game_height)?;
-        Self::clear_menu_box(game_width - 2, game_height)?;
+        Self::draw_menu_box_top(game_width - 2, game_height-5)?;
+        Self::draw_menu_box_bottom(game_width - 2, game_height-2)?;
+        Self::clear_between(1, game_height-5, game_height-2, game_width-2)?;
+        Ok(())
+    }
+
+    pub fn draw_trade_menu(&self, game_width: u16, game_height: u16) -> io::Result<()> {
         Ok(())
     }
 
     fn draw_menu_box_top(width: u16, bottom: u16) -> io::Result<()> {
-        queue!(io::stdout(), MoveTo(1, bottom - 5), Print(TLCORNER))?;
+        queue!(io::stdout(), MoveTo(1, bottom), Print(TLCORNER))?;
         for _ in 0..width - 2 {
             queue!(io::stdout(), Print(HBORDER))?;
         }
@@ -31,24 +34,20 @@ impl Menu {
         Ok(())
     }
 
-    fn clear_menu_box(width: u16, bottom: u16) -> io::Result<()> {
-        queue!(io::stdout(), MoveTo(1, bottom - 4))?;
-        for _ in 0..width {
-            queue!(io::stdout(), Print(" "))?;
-        }
-        queue!(io::stdout(), MoveTo(1, bottom - 3))?;
-        for _ in 0..width {
-            queue!(io::stdout(), Print(" "))?;
-        }
-        Ok(())
-    }
-
     fn draw_menu_box_bottom(width: u16, bottom: u16) -> io::Result<()> {
-        queue!(io::stdout(), MoveTo(1, bottom - 2), Print(BLCORNER))?;
+        queue!(io::stdout(), MoveTo(1, bottom), Print(BLCORNER))?;
         for _ in 0..width - 2 {
             queue!(io::stdout(), Print(HBORDER))?;
         }
         queue!(io::stdout(), Print(BRCORNER))?;
+        Ok(())
+    }
+
+    fn clear_between(left: u16, top: u16, bottom: u16, width: u16) -> io::Result<()> {
+        for i in 1..bottom-top {
+            queue!(io::stdout(), MoveTo(left, top+i))?;
+            queue!(io::stdout(), Print(" ".repeat(width.into())))?;
+        }
         Ok(())
     }
 }
