@@ -20,7 +20,9 @@ mod player;
 mod tiles;
 mod utils;
 
-use crate::{config::*, info::Info, map::Map, menu::Menu, merchant::Merchant, player::Player, utils::*};
+use crate::{
+    config::*, info::Info, map::Map, menu::Menu, merchant::Merchant, player::Player, utils::*,
+};
 
 fn main() -> io::Result<()> {
     enable_raw_mode()?;
@@ -36,11 +38,17 @@ fn main() -> io::Result<()> {
     let game_width: u16 = terminal::size()?.0;
     let game_height: u16 = terminal::size()?.1;
 
-    
-    let left = MAP_WIDTH/2; 
-    let top = MAP_HEIGHT/2;
+    let left = MAP_WIDTH / 2;
+    let top = MAP_HEIGHT / 2;
 
-    let mut map = Map::new(MAP_WIDTH, MAP_HEIGHT, left, top, game_width as usize, game_height as usize);
+    let mut map = Map::new(
+        MAP_WIDTH,
+        MAP_HEIGHT,
+        left,
+        top,
+        game_width as usize,
+        game_height as usize,
+    );
     let mut player = Player::new(&map);
 
     let mut global_merchant = Merchant::new();
@@ -80,7 +88,14 @@ fn main() -> io::Result<()> {
                     player.reset_buying();
                 }
                 event::KeyCode::F(5) => {
-                    map = Map::new(MAP_WIDTH, MAP_HEIGHT, left, top, game_width as usize, game_height as usize);
+                    map = Map::new(
+                        MAP_WIDTH,
+                        MAP_HEIGHT,
+                        left,
+                        top,
+                        game_width as usize,
+                        game_height as usize,
+                    );
                     player = Player::new(&map);
                     map.draw_map()?;
                     execute!(
@@ -101,22 +116,22 @@ fn main() -> io::Result<()> {
                     ' ' => player.plant_seeds(&mut map),
                     '1' => {
                         if player.is_on_merchant(&map) {
-                            player.buying.get_mut(&Item::Rock).map(|e| {*e += 1});
+                            player.buying.get_mut(&Item::Rock).map(|e| *e += 1);
                         };
                     }
                     '2' => {
                         if player.is_on_merchant(&map) {
-                            player.buying.get_mut(&Item::Seed).map(|e| {*e += 1});
+                            player.buying.get_mut(&Item::Seed).map(|e| *e += 1);
                         };
                     }
                     '!' => {
                         if player.is_on_merchant(&map) {
-                            player.buying.get_mut(&Item::Rock).map(|e| {*e -= 1});
+                            player.buying.get_mut(&Item::Rock).map(|e| *e -= 1);
                         };
                     }
                     '"' => {
                         if player.is_on_merchant(&map) {
-                            player.buying.get_mut(&Item::Seed).map(|e| {*e -= 1});
+                            player.buying.get_mut(&Item::Seed).map(|e| *e -= 1);
                         };
                     }
                     _ => {}
@@ -126,12 +141,20 @@ fn main() -> io::Result<()> {
             _ => {}
         }
 
+        if player.left_merchant(&map, old_player_pos) {
+            map.draw_map_part(
+                TRADE_MENU_LEFT.into(),
+                game_height as usize - TRADE_MENU_TOP as usize,
+                TRADE_MENU_WIDTH.into(),
+                TRADE_MENU_HEIGHT.into(),
+            )?;
+        }
+        if player.is_on_merchant(&map) {
+            menu.draw_trade_menu()?;
+        }
+
         map.draw_player(old_player_pos, &player)?;
         menu.draw_menu()?;
-        if player.is_on_merchant(&map) {
-            menu.draw_trade_menu(20, 5)?;
-        }
-        //info.draw_info(&map, &player, &global_merchant)?;
         stdout.flush()?;
     }
 

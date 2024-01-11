@@ -7,9 +7,12 @@ use crossterm::{
 use perlin_noise::PerlinNoise;
 use std::io::{self, Write};
 
-use crate::player::Player;
 use crate::tiles::Tile::{self, *};
 use crate::utils::*;
+use crate::{
+    config::{TRADE_MENU_HEIGHT, TRADE_MENU_LEFT, TRADE_MENU_TOP},
+    player::Player,
+};
 
 pub struct Map {
     pub width: usize,
@@ -54,8 +57,8 @@ impl Map {
 
     pub fn is_near_water(&self, x: usize, y: usize) -> bool {
         // saturated
-        for i in x-2..x+3 {
-            for j in y-2..y+3 {
+        for i in x - 2..x + 3 {
+            for j in y - 2..y + 3 {
                 if self.get_tile(i, j) == Tile::Water {
                     return true;
                 }
@@ -68,7 +71,10 @@ impl Map {
         let to_mine = self.get_tile(x, y);
         execute!(
             io::stdout(),
-            MoveTo((x - self.viewleft as usize) as u16, (y - self.viewtop as usize) as u16),
+            MoveTo(
+                (x - self.viewleft as usize) as u16,
+                (y - self.viewtop as usize) as u16
+            ),
             PrintStyledContent(to_mine.draw_tile::<&str>(t))
         )?;
         Ok(())
@@ -85,17 +91,26 @@ impl Map {
                 )?;
             }
         }
-
-        //self.draw_map_border()?;
         Ok(())
     }
 
-    pub fn draw_map_border(&self) -> io::Result<()> {
-        queue!(io::stdout(), MoveTo(0, self.viewheight as u16))?;
-        for _ in 0..terminal::size()?.0 {
-            queue!(io::stdout(), Print("─"))?;
+    pub fn draw_map_part(
+        &self,
+        left: usize,
+        top: usize,
+        width: usize,
+        height: usize,
+    ) -> io::Result<()> {
+        for x in left..left + width {
+            for y in top..top + height {
+                let tile = self.map_tiles[self.viewtop + y][self.viewleft + x];
+                queue!(
+                    io::stdout(),
+                    MoveTo(x as u16, y as u16),
+                    PrintStyledContent(tile.draw_tile::<&str>(false))
+                )?;
+            }
         }
-
         Ok(())
     }
 
@@ -106,14 +121,17 @@ impl Map {
                 if (saturated_sub(current_pos.1, self.viewtop, 0) as u16) < self.viewheight as u16 {
                     saturated_sub(current_pos.1, self.viewtop, 0) as u16
                 } else {
-                    self.viewheight as u16 - 1 
+                    self.viewheight as u16 - 1
                 }
             }),
             PrintStyledContent(
                 self.map_tiles[current_pos.1 as usize][current_pos.0 as usize]
                     .draw_tile::<&str>(false)
             ),
-            MoveTo((player.x - self.viewleft) as u16, (player.y - self.viewtop) as u16),
+            MoveTo(
+                (player.x - self.viewleft) as u16,
+                (player.y - self.viewtop) as u16
+            ),
             Print('X'),
             MoveLeft(1),
         )?;

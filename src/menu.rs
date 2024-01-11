@@ -26,25 +26,25 @@ impl Menu {
     }
 
     pub fn draw_menu(&self) -> io::Result<()> {
-        Self::draw_box_top(1, self.game_height - 5, self.game_width - 2)?;
+        Self::draw_box_top(1, self.game_height - MENU_TOP, self.game_width - 2)?;
         Self::draw_box_bottom(1, self.game_height - 2, self.game_width - 2)?;
         Self::clear_between(
             1,
-            self.game_height - 5,
-            self.game_height - 2,
+            self.game_height - MENU_TOP,
+            self.game_height - MENU_TOP + MENU_HEIGHT - 1,
             self.game_width - 2,
         )?;
         Ok(())
     }
 
-    pub fn draw_trade_menu(&self, width: u16, height: u16) -> io::Result<()> {
-        Self::draw_box_top(1, self.game_height - 6 - height, width)?;
-        Self::draw_box_bottom(1, self.game_height - 6, width)?;
+    pub fn draw_trade_menu(&self) -> io::Result<()> {
+        Self::draw_box_top(1, self.game_height - TRADE_MENU_TOP, TRADE_MENU_WIDTH)?;
+        Self::draw_box_bottom(1, self.game_height - MENU_HEIGHT - 2, TRADE_MENU_WIDTH)?;
         Self::clear_between(
             1,
-            self.game_height - 6 - height,
-            self.game_height - 6,
-            width,
+            self.game_height - TRADE_MENU_TOP,
+            self.game_height - TRADE_MENU_TOP + TRADE_MENU_HEIGHT - 1,
+            TRADE_MENU_WIDTH,
         )?;
         Ok(())
     }

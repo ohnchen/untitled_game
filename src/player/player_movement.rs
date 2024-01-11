@@ -104,6 +104,13 @@ impl Player {
         return false;
     }
 
+    pub fn left_merchant(&self, map: &Map, old_pos: (usize, usize)) -> bool {
+        if map.get_tile(old_pos.0, old_pos.1) == Tile::Merchant {
+            return true;
+        }
+        return false;
+    }
+
     fn mine(&mut self, map: &mut Map, x: usize, y: usize) -> io::Result<bool> {
         let mut mined = false;
         map.mine_option(x, y, true)?;
