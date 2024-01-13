@@ -2,8 +2,9 @@
 
 # untitled game
 
-This is a game inspired the ideas of Dwarf Fortress and Stardew Valley. It's a way for me to explore different smaller projects and join them into a bigger hopefully well-crafted experience. It is supposed to be a simulation/managment game.
+This is a game inspired the ideas of Dwarf Fortress and Stardew Valley. It's a way for me to explore different smaller projects and join them into a bigger and hopefully well-crafted experience.
 
+The following screenshot is an example from the early stages of developement:
 ![Example from Game](assets/readme/example_ingame.png)
 
 
@@ -11,7 +12,7 @@ This is a game inspired the ideas of Dwarf Fortress and Stardew Valley. It's a w
 
 **Jona Ohme**
 
-- [Profile](https://github.com/ohnchen "ohnchen")
+- [Profile](https://github.com/rxcrh "rxcrh")
 
 ## 🤝 Support
 
