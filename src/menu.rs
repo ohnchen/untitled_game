@@ -29,7 +29,7 @@ impl Menu {
         Self::draw_box_top(self.game_width - DEBUG_WIDTH - 1, 1, DEBUG_WIDTH)?;
         Self::draw_box_bottom(
             self.game_width - DEBUG_WIDTH - 1,
-            DEBUG_HEIGHT,
+            DEBUG_HEIGHT ,
             DEBUG_WIDTH,
         )?;
         Self::clear_between(
@@ -146,7 +146,7 @@ impl Menu {
 
     fn write_between(&self, formats: Vec<String>, left: u16, top: u16, _width: u16, height: u16) -> io::Result<()> {
         for (i, fmt) in formats.iter().enumerate() {
-            if i as u16 + 2 >= height {
+            if i as u16 + 1 >= height {
                 return Ok(());
             }
             queue!(
