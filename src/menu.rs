@@ -47,7 +47,7 @@ impl Menu {
                 format!("merchant.gold> {}", merchant.gold),
             ],
             self.game_width - DEBUG_WIDTH + 1,
-            2,
+            1,
             DEBUG_WIDTH,
             DEBUG_HEIGHT,
         )?;

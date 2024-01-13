@@ -4,6 +4,8 @@
 
 This is a game inspired the ideas of Dwarf Fortress and Stardew Valley. It's a way for me to explore different smaller projects and join them into a bigger hopefully well-crafted experience. It is supposed to be a simulation/managment game.
 
+![Example from Game](assets/readme/example_ingame.png)
+
 
 ## Author
 
