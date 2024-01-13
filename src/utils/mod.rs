@@ -30,7 +30,6 @@ pub enum Tool {
     Pickaxe,
     Hoe,
     FishingRod,
-    Bucket,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]

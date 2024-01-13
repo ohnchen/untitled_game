@@ -38,30 +38,18 @@ impl Menu {
             DEBUG_HEIGHT + 1,
             DEBUG_WIDTH,
         )?;
-        queue!(
-            io::stdout(),
-            MoveTo(self.game_width - DEBUG_WIDTH + 1, 2),
-            Print("DEBUG>")
-        )?;
-        queue!(
-            io::stdout(),
-            MoveTo(self.game_width - DEBUG_WIDTH + 1, 3),
-            Print(format!("map> {} {}", map.width, map.height))
-        )?;
-        queue!(
-            io::stdout(),
-            MoveTo(self.game_width - DEBUG_WIDTH + 1, 4),
-            Print(format!("player> {} {}", player.x, player.y))
-        )?;
-        queue!(
-            io::stdout(),
-            MoveTo(self.game_width - DEBUG_WIDTH + 1, 5),
-            Print(format!("player.gold> {}", player.gold))
-        )?;
-        queue!(
-            io::stdout(),
-            MoveTo(self.game_width - DEBUG_WIDTH + 1, 6),
-            Print(format!("merchant.gold> {}", merchant.gold))
+        self.write_between(
+            vec![
+                "DEBUG>".to_string(),
+                format!("map> {} {}", map.width, map.height),
+                format!("player> {} {}", player.x, player.y),
+                format!("player.gold> {}", player.gold),
+                format!("merchant.gold> {}", merchant.gold),
+            ],
+            self.game_width - DEBUG_WIDTH + 1,
+            2,
+            DEBUG_WIDTH,
+            DEBUG_HEIGHT,
         )?;
         Ok(())
     }
@@ -74,6 +62,13 @@ impl Menu {
             self.game_height - MENU_TOP,
             self.game_height - MENU_TOP + MENU_HEIGHT - 1,
             self.game_width - 2,
+        )?;
+        self.write_between(
+            vec!["Dont play this game!".to_string()],
+            3,
+            self.game_height - MENU_HEIGHT,
+            self.game_width - 2,
+            MENU_HEIGHT,
         )?;
         Ok(())
     }
@@ -95,34 +90,36 @@ impl Menu {
             self.game_height - TRADE_MENU_TOP + TRADE_MENU_HEIGHT - 1,
             TRADE_MENU_WIDTH,
         )?;
-        let mut top = TRADE_MENU_TOP - 1;
-        queue!(
-            io::stdout(),
-            MoveTo(TRADE_MENU_LEFT + 2, self.game_height - top),
-            Print("MERCHANT>"),
+        self.write_between(
+            [vec!["MERCHANT>".to_string()], {
+                player
+                    .items
+                    .iter()
+                    .enumerate()
+                    .map(|(i, (k, v))| {
+                        let b_value = player.buying[k];
+                        format!(
+                            "{}:{} {:?}({}{:?})",
+                            i + 1,
+                            k.get_name(),
+                            v,
+                            {
+                                if b_value > 0 {
+                                    '+'
+                                } else {
+                                    '​'
+                                }
+                            },
+                            b_value,
+                        )
+                    })
+                    .collect::<Vec<String>>()
+            }].concat(),
+            3,
+            self.game_height - TRADE_MENU_TOP,
+            self.game_width - 2,
+            TRADE_MENU_HEIGHT,
         )?;
-        for (i, (k, v)) in player.items.iter().enumerate() {
-            let b_value = player.buying[k];
-            top -= 1;
-            queue!(
-                io::stdout(),
-                MoveTo(TRADE_MENU_LEFT + 2, self.game_height - top),
-                Print(format!(
-                    "{}:{} {:?}({}{:?})",
-                    i + 1,
-                    k.get_name(),
-                    v,
-                    {
-                        if b_value > 0 {
-                            '+'
-                        } else {
-                            '​'
-                        }
-                    },
-                    b_value,
-                ))
-            )?;
-        }
         Ok(())
     }
 
@@ -145,6 +142,20 @@ impl Menu {
             Print(HBORDER.repeat(width as usize - 2)),
             Print(BRCORNER)
         )?;
+        Ok(())
+    }
+
+    fn write_between(&self, formats: Vec<String>, left: u16, top: u16, _width: u16, height: u16) -> io::Result<()> {
+        for (i, fmt) in formats.iter().enumerate() {
+            if i as u16 + 2 >= height {
+                return Ok(());
+            }
+            queue!(
+                io::stdout(),
+                MoveTo(left, i as u16 + top),
+                Print(fmt)
+            )?;
+        }
         Ok(())
     }
 
