@@ -95,12 +95,11 @@ impl Menu {
                 player
                     .items
                     .iter()
-                    .enumerate()
-                    .map(|(i, (k, v))| {
+                    .map(|(k, v)| {
                         let b_value = player.buying[k];
                         format!(
                             "{}:{} {:?}({}{:?})",
-                            i + 1,
+                            k.get_id(),
                             k.get_name(),
                             v,
                             {

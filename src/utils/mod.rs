@@ -45,5 +45,12 @@ impl Item {
             Item::Seed => "Seed".to_owned(),
         }
     }
+    
+    pub fn get_id(&self) -> usize {
+        match self {
+            Item::Rock => 1,
+            Item::Seed => 2,
+        }
+    }
 }
     
