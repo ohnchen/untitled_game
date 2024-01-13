@@ -29,13 +29,13 @@ impl Menu {
         Self::draw_box_top(self.game_width - DEBUG_WIDTH - 1, 1, DEBUG_WIDTH)?;
         Self::draw_box_bottom(
             self.game_width - DEBUG_WIDTH - 1,
-            DEBUG_HEIGHT + 1,
+            DEBUG_HEIGHT,
             DEBUG_WIDTH,
         )?;
         Self::clear_between(
             self.game_width - DEBUG_WIDTH - 1,
             1,
-            DEBUG_HEIGHT + 1,
+            DEBUG_HEIGHT,
             DEBUG_WIDTH,
         )?;
         self.write_between(

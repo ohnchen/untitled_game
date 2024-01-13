@@ -1,7 +1,7 @@
 // General Game options
 pub static DEBUG: bool = true;
 pub static DEBUG_WIDTH: u16 = 23; 
-pub static DEBUG_HEIGHT: u16 = 7; 
+pub static DEBUG_HEIGHT: u16 = 8; 
 
 pub static MAP_WIDTH: usize = 500;
 pub static MAP_HEIGHT: usize = 500;
