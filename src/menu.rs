@@ -92,7 +92,7 @@ impl Menu {
         )?;
         self.write_between(
             [vec!["MERCHANT>".to_string()], {
-                player
+                let mut l = player
                     .items
                     .iter()
                     .map(|(k, v)| {
@@ -112,7 +112,9 @@ impl Menu {
                             b_value,
                         )
                     })
-                    .collect::<Vec<String>>()
+                    .collect::<Vec<String>>();
+                l.sort();
+                l
             }].concat(),
             3,
             self.game_height - TRADE_MENU_TOP,
